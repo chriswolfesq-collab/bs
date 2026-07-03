@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BS Card Game v6 Table UI</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --felt:#146325;
+  --felt2:#0d421a;
+  --wood:#4b2b17;
+  --gold:#d9a441;
+  --blue:#3da0ff;
+  --red:#ff6b6b;
+  --green:#83d65b;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  overflow:hidden;
+  font-family:Arial, Helvetica, sans-serif;
+  color:#fff;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.18),rgba(255,255,255,.035),rgba(0,0,0,.22)),
+    repeating-linear-gradient(90deg,#2a160c 0,#3b2112 110px,#241109 112px,#4d2a16 220px);
+}
+.table-wrap{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  padding:18px 300px 18px 250px;
+}
+.scoreboard,.claim-card,.side-panel,.deck-panel,.menu-buttons button,.rules-btn{
+  background:rgba(8,8,8,.78);
+  border:2px solid rgba(217,164,65,.55);
+  box-shadow:0 8px 22px rgba(0,0,0,.4), inset 0 0 18px rgba(255,255,255,.04);
+  border-radius:14px;
+}
+.scoreboard{
+  position:absolute;
+  top:18px;
+  left:18px;
+  width:180px;
+  padding:14px 18px;
+  z-index:10;
+}
+.score-title{font-size:14px;font-weight:900;color:#ffe56b;text-align:center;margin-bottom:12px}
+.score-row{display:flex;justify-content:space-between;font-size:20px;font-weight:900;margin:12px 0}
+.score-you{color:var(--blue)} .score-amy{color:#ff8a8a} .score-carl{color:var(--blue)} .score-harry{color:var(--green)}
+.table{
+  position:absolute;
+  left:250px;
+  right:300px;
+  top:12px;
+  bottom:28px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 45% 35%,rgba(255,255,255,.12),transparent 25%),
+    radial-gradient(circle,var(--felt) 0%,#125b22 45%,var(--felt2) 100%);
+  border:22px solid #5c3216;
+  box-shadow:
+    0 0 0 7px #b16e31,
+    0 28px 55px rgba(0,0,0,.65),
+    inset 0 0 0 4px rgba(255,255,255,.06),
+    inset 0 0 90px rgba(0,0,0,.4);
+}
+.table:after{
+  content:"";
+  position:absolute;
+  inset:28%;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,.09);
+}
+.seat{
+  position:absolute;
+  z-index:4;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.seat.top{left:50%;top:2px;transform:translateX(-50%);flex-direction:column}
+.seat.left{left:18px;top:45%;transform:translateY(-50%);flex-direction:column}
+.seat.right{right:18px;top:45%;transform:translateY(-50%);flex-direction:column}
+.seat.bottom{left:50%;bottom:-8px;transform:translateX(-50%);flex-direction:column}
+.avatar{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  border:5px solid #d2ad56;
+  background:radial-gradient(circle at 35% 25%,#ffe0b5,#7c4a2b);
+  box-shadow:0 8px 18px rgba(0,0,0,.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:54px;
+  position:relative;
+  z-index:5;
+}
+.seat.active .avatar{box-shadow:0 0 0 5px #ffe56b, 0 0 28px #ffe56b}
+.info-bubble{
+  background:rgba(0,0,0,.73);
+  border:2px solid rgba(68,231,186,.65);
+  border-radius:9px;
+  padding:10px 14px;
+  min-width:160px;
+  max-width:210px;
+}
+.left .info-bubble,.right .info-bubble{position:absolute;top:115px}
+.left .info-bubble{left:-4px}
+.right .info-bubble{right:-4px}
+.top .info-bubble{position:absolute;left:108px;top:10px}
+.bottom .info-bubble{display:none}
+.player-name{font-size:18px;font-weight:900;margin-bottom:4px}
+.player-trait{font-size:14px;line-height:1.25;opacity:.9}
+.count-badge{
+  background:rgba(0,0,0,.78);
+  border:2px solid rgba(217,164,65,.55);
+  border-radius:10px;
+  padding:8px 18px;
+  text-align:center;
+  font-weight:900;
+  min-width:96px;
+}
+.count-num{font-size:26px;line-height:1}
+.count-label{font-size:13px;margin-top:3px}
+.top .count-badge{position:absolute;left:195px;top:98px}
+.left .count-badge{margin-top:140px}
+.right .count-badge{margin-top:140px}
+.bottom .count-badge{
+  margin-top:-6px;
+  background:#0859b8;
+  border-color:#b78a36;
+  padding:5px 22px;
+}
+.ai-cards{
+  position:absolute;
+  display:flex;
+  z-index:3;
+  pointer-events:none;
+}
+.ai-cards.top-cards{left:50%;top:172px;transform:translateX(-50%);height:105px;align-items:flex-start}
+.ai-cards.left-cards{left:120px;top:44%;transform:translateY(-50%) rotate(90deg);height:105px}
+.ai-cards.right-cards{right:120px;top:44%;transform:translateY(-50%) rotate(-90deg);height:105px}
+.card-back{
+  width:50px;
+  height:74px;
+  margin-left:-22px;
+  border-radius:7px;
+  background:
+    linear-gradient(135deg,#1a3d70,#3b68a3);
+  border:3px solid #e7e1d8;
+  box-shadow:0 5px 10px rgba(0,0,0,.35);
+  position:relative;
+}
+.card-back:before{
+  content:"BS";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  font-weight:900;
+  color:rgba(255,255,255,.8);
+}
+.center-stage{
+  position:absolute;
+  left:50%;
+  top:49%;
+  transform:translate(-50%,-50%);
+  z-index:5;
+  text-align:center;
+}
+.claim-banner{
+  min-width:350px;
+  padding:14px 22px;
+  margin-bottom:18px;
+  background:rgba(0,0,0,.72);
+  border:2px solid rgba(255,255,255,.25);
+  border-radius:12px;
+  font-size:22px;
+  line-height:1.28;
+  font-weight:700;
+}
+.claim-banner b{color:#ff7b7b}
+.claim-banner .rank-word{color:#bb75ff;font-weight:900}
+.pile-stack{
+  width:110px;
+  height:140px;
+  margin:0 auto;
+  position:relative;
+}
+.pile-card{
+  position:absolute;
+  width:92px;
+  height:128px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#244b82,#315f9b);
+  border:3px solid #eee;
+  box-shadow:0 6px 12px rgba(0,0,0,.35);
+  left:8px;
+  top:8px;
+}
+.pile-card:after{
+  content:"BS";
+  position:absolute;
+  inset:12px;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:5px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#dce8ff;
+  font-size:26px;
+  font-weight:900;
+}
+.action-row{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  margin-top:20px;
+}
+button,select{
+  border:none;
+  border-radius:10px;
+  padding:12px 18px;
+  font-size:18px;
+  font-weight:900;
+}
+button{cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.35)}
+button:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+button:disabled{opacity:.45;cursor:not-allowed}
+#playBtn{background:#f3cc62;color:#1d1608}
+#bsBtn{background:#2d8f21;color:white;border:2px solid #9cf18d}
+#passBtn{background:#8e3227;color:white;border:2px solid #e98675}
+#newGameBtn{background:#ddd;color:#222;font-size:14px;padding:9px 13px}
+select{background:#eee;color:#222;font-size:15px}
+.turn-hint{margin-top:12px;font-size:15px;color:#ddd}
+.turn-hint b{color:#ffd84e}
+.hand-panel{
+  position:absolute;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%);
+  width:720px;
+  z-index:8;
+  text-align:center;
+}
+.hand-title{
+  font-size:14px;
+  color:#f6e46c;
+  font-weight:900;
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.cards{
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  min-height:122px;
+}
+.card{
+  width:68px;
+  height:98px;
+  background:#fff;
+  color:#111;
+  border-radius:7px;
+  border:2px solid #d8d8d8;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:6px;
+  margin-left:-10px;
+  cursor:pointer;
+  user-select:none;
+  font-weight:900;
+  box-shadow:0 7px 12px rgba(0,0,0,.35);
+  transform-origin:bottom center;
+  transition:transform .12s ease, outline .12s ease;
+}
+.card.red{color:#b61919}
+.card .rank{font-size:22px;line-height:1}
+.card .suit{font-size:25px;text-align:center}
+.card.selected{
+  transform:translateY(-22px) rotate(0deg)!important;
+  outline:4px solid #ffd84e;
+}
+.side-panel{
+  position:absolute;
+  right:20px;
+  top:20px;
+  width:245px;
+  height:470px;
+  padding:14px;
+  z-index:10;
+}
+.log-title{
+  text-align:center;
+  color:#ffe56b;
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+.log{
+  height:395px;
+  overflow-y:auto;
+  padding-right:6px;
+  font-size:15px;
+  line-height:1.35;
+}
+.log div{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.log .play{color:#fff5c4}
+.log .call{color:#ffc0bd}
+.log .truth{color:#bdf7cf}
+.log .lie{color:#ffb0aa}
+.log .system{color:#d8e8ff}
+.claim-card{
+  position:absolute;
+  left:20px;
+  bottom:125px;
+  width:260px;
+  padding:14px;
+  text-align:center;
+  z-index:10;
+}
+.claim-card h4{margin:0 0 10px;color:#ffe56b}
+.claim-card div{font-size:18px;line-height:1.35}
+.rules-btn{
+  position:absolute;
+  left:20px;
+  bottom:25px;
+  z-index:10;
+  color:#eee;
+  padding:16px 28px;
+  font-size:18px;
+  font-weight:900;
+}
+.deck-panel{
+  position:absolute;
+  right:220px;
+  bottom:25px;
+  width:115px;
+  padding:12px;
+  text-align:center;
+  z-index:10;
+}
+.deck-mini{
+  width:62px;height:88px;margin:8px auto;border-radius:7px;border:3px solid #eee;background:linear-gradient(135deg,#244b82,#315f9b);position:relative
+}
+.deck-mini:after{content:"BS";position:absolute;inset:10px;border:1px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:900}
+.menu-buttons{
+  position:absolute;
+  right:20px;
+  bottom:25px;
+  width:170px;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.menu-buttons button{
+  color:white;
+  font-size:18px;
+  padding:15px;
+}
+.winner{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99;
+}
+.winner-box{
+  background:#f7f7f7;
+  color:#111;
+  border-radius:20px;
+  padding:28px;
+  text-align:center;
+  width:min(440px,92vw);
+}
+@media(max-width:1050px){
+  body{overflow:auto}
+  .table-wrap{height:1000px;width:1050px}
+}
+</style>
+</head>
+<body>
+<div class="table-wrap">
+  <div class="scoreboard">
+    <div class="score-title">GAME TO 100</div>
+    <div class="score-row score-you"><span>YOU</span><span>0</span></div>
+    <div class="score-row score-amy"><span>AMY</span><span>0</span></div>
+    <div class="score-row score-carl"><span>CARL</span><span>0</span></div>
+    <div class="score-row score-harry"><span>HARRY</span><span>0</span></div>
+  </div>
+
+  <div class="table">
+    <div class="seat top" id="seat-amy">
+      <div class="avatar">👩</div>
+      <div class="info-bubble">
+        <div class="player-name" style="color:#ff8585">Aggressive Amy</div>
+        <div class="player-trait">Bluffs a lot and calls BS often.</div>
+      </div>
+      <div class="count-badge"><div class="count-num" id="count-amy">13</div><div class="count-label">CARDS</div></div>
+    </div>
+    <div class="ai-cards top-cards" id="cards-amy"></div>
+
+    <div class="seat left" id="seat-harry">
+      <div class="avatar">👨</div>
+      <div class="info-bubble">
+        <div class="player-name" style="color:#83d65b">Honest Harry</div>
+        <div class="player-trait">Rarely bluffs and rarely calls BS.</div>
+      </div>
+      <div class="count-badge"><div class="count-num" id="count-harry">13</div><div class="count-label">CARDS</div></div>
+    </div>
+    <div class="ai-cards left-cards" id="cards-harry"></div>
+
+    <div class="seat right" id="seat-carl">
+      <div class="avatar">👨‍💼</div>
+      <div class="info-bubble">
+        <div class="player-name" style="color:#3da0ff">Calculator Carl</div>
+        <div class="player-trait">Tracks the cards and calls BS smart.</div>
+      </div>
+      <div class="count-badge"><div class="count-num" id="count-carl">13</div><div class="count-label">CARDS</div></div>
+    </div>
+    <div class="ai-cards right-cards" id="cards-carl"></div>
+
+    <div class="center-stage">
+      <div class="claim-banner" id="turnText">Loading...</div>
+      <div class="pile-stack" id="pileStack"></div>
+      <div class="action-row" id="playControls">
+        <select id="claimCount">
+          <option value="1">Claim 1 card</option>
+          <option value="2">Claim 2 cards</option>
+          <option value="3">Claim 3 cards</option>
+          <option value="4">Claim 4 cards</option>
+        </select>
+        <button id="playBtn">PLAY SELECTED</button>
+      </div>
+      <div class="action-row" id="challengeControls" style="display:none;">
+        <button id="bsBtn">CALL BS</button>
+        <button id="passBtn">PASS</button>
+      </div>
+      <div class="turn-hint" id="instructionText"></div>
+    </div>
+
+    <div class="seat bottom" id="seat-you">
+      <div class="avatar">😎</div>
+      <div class="count-badge"><div class="player-name">YOU</div><div id="humanCount">13 cards</div></div>
+    </div>
+  </div>
+
+  <div class="hand-panel">
+    <div class="hand-title">YOUR HAND <span id="selectedText" style="float:right;font-weight:400;color:#ddd">Selected: 0</span></div>
+    <div class="cards" id="hand"></div>
+  </div>
+
+  <div class="side-panel">
+    <div class="log-title">GAME LOG</div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <div class="claim-card">
+    <h4>CURRENT CLAIM</h4>
+    <div id="pileInfo">Pile: 0 cards<br>Last claim: none</div>
+  </div>
+
+  <button class="rules-btn">📖 RULES</button>
+
+  <div class="deck-panel">
+    <div>DECK</div>
+    <div class="deck-mini"></div>
+    <div id="deckCount">0 CARDS</div>
+  </div>
+
+  <div class="menu-buttons">
+    <button id="newGameBtn">NEW GAME</button>
+    <button>MAIN MENU</button>
+  </div>
+</div>
+
+<div class="winner" id="winnerOverlay">
+  <div class="winner-box">
+    <h2 id="winnerTitle">Winner!</h2>
+    <p id="winnerDetails"></p>
+    <button id="againBtn">Play Again</button>
+  </div>
+</div>
+
+<script>
+const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const suits = ['♠','♥','♦','♣'];
+const aiTemplates = [
+  { name: 'Honest Harry', trait: 'Low bluff, cautious calls', bluff: .12, call: .18, style: 'Honest', risk: 'Low', key:'harry' },
+  { name: 'Aggressive Amy', trait: 'Bluffs often and calls often', bluff: .48, call: .58, style: 'Aggressive', risk: 'High', key:'amy' },
+  { name: 'Calculator Carl', trait: 'Tracks ranks and calls smarter', bluff: .26, call: .32, style: 'Strategic', risk: 'Medium', counter: true, key:'carl' }
+];
+let players, currentPlayer, requiredRankIndex, pile, lastPlay, pendingChallenge, selectedIds, gameOver;
+let cardId = 1;
+const CLAIM_DISPLAY_DELAY = 2000;
+const CHALLENGE_WINDOW = 4000;
+const REVEAL_DELAY = 1500;
+
+const handEl = document.getElementById('hand');
+const logEl = document.getElementById('log');
+const turnText = document.getElementById('turnText');
+const instructionText = document.getElementById('instructionText');
+const pileInfo = document.getElementById('pileInfo');
+const humanCount = document.getElementById('humanCount');
+const selectedText = document.getElementById('selectedText');
+const playControls = document.getElementById('playControls');
+const challengeControls = document.getElementById('challengeControls');
+
+function createDeck(){
+  const deck=[];
+  for(const r of ranks){for(const s of suits) deck.push({id:cardId++,rank:r,suit:s});}
+  return shuffle(deck);
+}
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+function newGame(){
+  cardId=1;
+  const deck=createDeck();
+  players=[
+    {name:'You',isHuman:true,hand:[],trait:'Human Player',key:'you'},
+    { ...aiTemplates[1], isHuman:false, hand:[] },
+    { ...aiTemplates[2], isHuman:false, hand:[] },
+    { ...aiTemplates[0], isHuman:false, hand:[] }
+  ];
+  let p=0;
+  while(deck.length){players[p%players.length].hand.push(deck.pop());p++;}
+  players.forEach(pl=>sortHand(pl.hand));
+  currentPlayer=0; requiredRankIndex=0; pile=[]; lastPlay=null; pendingChallenge=false; selectedIds=new Set(); gameOver=false;
+  logEl.innerHTML='';
+  document.getElementById('winnerOverlay').style.display='none';
+  addLog('New game started. You go first. Required rank is Aces.','system');
+  addLog('V6 rebuilt the table UI around seats, card backs, pile, and claim banner.','system');
+  render();
+}
+function sortHand(hand){hand.sort((a,b)=>ranks.indexOf(a.rank)-ranks.indexOf(b.rank)||suits.indexOf(a.suit)-suits.indexOf(b.suit));}
+function currentRank(){return ranks[requiredRankIndex];}
+function nextRank(){requiredRankIndex=(requiredRankIndex+1)%ranks.length;}
+function nextPlayer(){currentPlayer=(currentPlayer+1)%players.length;}
+function addLog(text,type='system'){const div=document.createElement('div');div.className=type;div.textContent=text;logEl.prepend(div);}
+function render(){renderPlayers();renderHand();updateCenter();renderPile();}
+function renderPlayers(){
+  document.querySelectorAll('.seat').forEach(s=>s.classList.remove('active'));
+  if(!pendingChallenge) {
+    const key=players[currentPlayer].key;
+    const seat=document.getElementById('seat-'+key);
+    if(seat) seat.classList.add('active');
+  }
+  humanCount.textContent=`${players[0].hand.length} cards`;
+  document.getElementById('count-amy').textContent=players.find(p=>p.key==='amy').hand.length;
+  document.getElementById('count-carl').textContent=players.find(p=>p.key==='carl').hand.length;
+  document.getElementById('count-harry').textContent=players.find(p=>p.key==='harry').hand.length;
+  renderBacks('amy'); renderBacks('carl'); renderBacks('harry');
+}
+function renderBacks(key){
+  const pl=players.find(p=>p.key===key);
+  const el=document.getElementById('cards-'+key);
+  el.innerHTML='';
+  const shown=Math.min(pl.hand.length,13);
+  const mid=(shown-1)/2;
+  for(let i=0;i<shown;i++){
+    const c=document.createElement('div');
+    c.className='card-back';
+    c.style.transform=`rotate(${(i-mid)*4}deg) translateY(${Math.abs(i-mid)*1.5}px)`;
+    c.style.zIndex=i;
+    el.appendChild(c);
+  }
+}
+function renderHand(){
+  handEl.innerHTML='';
+  const hand=players[0].hand;
+  const mid=(hand.length-1)/2;
+  hand.forEach((card,i)=>{
+    const div=document.createElement('div');
+    div.className='card '+((card.suit==='♥'||card.suit==='♦')?'red ':'')+(selectedIds.has(card.id)?'selected':'');
+    const rotate=(i-mid)*4.2;
+    const lift=Math.abs(i-mid)*1.7;
+    if(!selectedIds.has(card.id)) div.style.transform=`rotate(${rotate}deg) translateY(${lift}px)`;
+    div.innerHTML=`<div class="rank">${card.rank}</div><div class="suit">${card.suit}</div><div class="rank" style="text-align:right">${card.rank}</div>`;
+    div.onclick=()=>toggleCard(card.id);
+    handEl.appendChild(div);
+  });
+  selectedText.textContent=`Selected: ${selectedIds.size}`;
+}
+function renderPile(){
+  const stack=document.getElementById('pileStack');
+  stack.innerHTML='';
+  const count=Math.max(1,Math.min(8,pile.length||1));
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');
+    c.className='pile-card';
+    c.style.left=(8+i*3)+'px';
+    c.style.top=(8+i*3)+'px';
+    c.style.zIndex=i;
+    stack.appendChild(c);
+  }
+  document.getElementById('deckCount').textContent=`${pile.length} CARDS`;
+}
+function updateCenter(){
+  const actor=players[currentPlayer];
+  const lastClaimText=lastPlay?`${lastPlay.playerName} played ${lastPlay.cards.length} card(s)<br>claiming <span class="rank-word">${lastPlay.claimRank}${lastPlay.cards.length>1?'s':''}</span>.`:'No claim yet';
+  pileInfo.innerHTML=lastPlay?`${lastPlay.cards.length} card(s) claiming <b>${lastPlay.claimRank}${lastPlay.cards.length>1?'s':''}</b>.<br>Pile: ${pile.length} cards`:`Pile: ${pile.length} cards<br>Last claim: none`;
+
+  if(pendingChallenge){
+    const challenger=players[currentPlayer];
+    turnText.innerHTML=lastClaimText;
+    instructionText.innerHTML=challenger.isHuman?`What will <b>YOU</b> do?`:`${challenger.name} is deciding...`;
+    playControls.style.display='none';
+    challengeControls.style.display=challenger.isHuman?'flex':'none';
+    if(!challenger.isHuman&&!gameOver) setTimeout(aiChallengeDecision,4000);
+    return;
+  }
+
+  turnText.innerHTML=`<b>${actor.name}</b>'s turn<br><span class="rank-word">Claiming ${currentRank()}s</span>`;
+  instructionText.innerHTML=actor.isHuman?`Select cards, choose a claim count, then play.`:`${actor.name} is thinking...`;
+  playControls.style.display=actor.isHuman?'flex':'none';
+  challengeControls.style.display='none';
+  if(!actor.isHuman&&!gameOver) setTimeout(aiPlayTurn,2500 + Math.random()*1000);
+}
+function toggleCard(id){
+  if(gameOver||pendingChallenge||currentPlayer!==0)return;
+  if(selectedIds.has(id)) selectedIds.delete(id);
+  else if(selectedIds.size<4) selectedIds.add(id);
+  renderHand();
+}
+function humanPlay(){
+  if(currentPlayer!==0||pendingChallenge||gameOver)return;
+  const countClaimed=Number(document.getElementById('claimCount').value);
+  const selected=players[0].hand.filter(c=>selectedIds.has(c.id));
+  if(selected.length===0){addLog('Select at least one card first.','system');return;}
+  if(selected.length!==countClaimed){addLog('Your claimed number must match the number of selected cards.','system');return;}
+  makePlay(0,selected,currentRank());
+}
+function makePlay(playerIdx,cards,claimRank){
+  const pl=players[playerIdx];
+  cards.forEach(card=>{const idx=pl.hand.findIndex(c=>c.id===card.id);if(idx>=0)pl.hand.splice(idx,1);});
+  pile.push(...cards);
+  lastPlay={playerIdx,playerName:pl.name,cards:[...cards],claimRank};
+  selectedIds.clear();
+  addLog(`${pl.name} played ${cards.length} card(s) claiming ${claimRank}${cards.length>1?'s':''}.`,'play');
+  nextPlayer();
+  turnText.innerHTML = `<b>${pl.name.toUpperCase()} CLAIMS</b><br><span class="rank-word">${cards.length} × ${claimRank}</span>`;
+  instructionText.innerHTML = 'Giving everyone a chance to call BS...';
+  setTimeout(()=>{
+    pendingChallenge=true;
+    render();
+  }, CLAIM_DISPLAY_DELAY);
+}
+function aiPlayTurn(){
+  if(gameOver||pendingChallenge||players[currentPlayer].isHuman)return;
+  const ai=players[currentPlayer];
+  const rank=currentRank();
+  const matching=ai.hand.filter(c=>c.rank===rank);
+  let cardsToPlay=[];
+  const willBluff=matching.length===0||Math.random()<ai.bluff;
+  if(!willBluff&&matching.length>0){
+    const n=Math.min(matching.length,1+Math.floor(Math.random()*matching.length));
+    cardsToPlay=matching.slice(0,n);
+  }else{
+    const max=Math.min(4,ai.hand.length);
+    let n=1+Math.floor(Math.random()*max);
+    if(matching.length&&Math.random()<.45){cardsToPlay.push(matching[0]);n--;}
+    const nonMatches=ai.hand.filter(c=>!cardsToPlay.some(x=>x.id===c.id));
+    shuffle(nonMatches);
+    cardsToPlay.push(...nonMatches.slice(0,n));
+  }
+  makePlay(currentPlayer,cardsToPlay,rank);
+}
+function aiChallengeDecision(){
+  if(gameOver||!pendingChallenge||players[currentPlayer].isHuman)return;
+  const ai=players[currentPlayer];
+  const claimRank=lastPlay.claimRank;
+  const knownInHand=ai.hand.filter(c=>c.rank===claimRank).length;
+  const claimed=lastPlay.cards.length;
+  let suspicion=ai.call;
+  if(knownInHand+claimed>4) suspicion+=ai.counter?.65:.45;
+  if(claimed>=3) suspicion+=ai.counter?.24:.18;
+  if(players[lastPlay.playerIdx].hand.length<=2) suspicion+=ai.counter?.28:.22;
+  if(players[lastPlay.playerIdx].bluff&&players[lastPlay.playerIdx].bluff>.4) suspicion+=ai.counter?.18:.10;
+  if(Math.random()<Math.min(.9,suspicion)) resolveChallenge(currentPlayer,true);
+  else resolveChallenge(currentPlayer,false);
+}
+function resolveChallenge(challengerIdx,called){
+  const challenger=players[challengerIdx];
+  if(!called){
+    addLog(`${challenger.name} passed.`,'system');
+    pendingChallenge=false; nextRank(); currentPlayer=challengerIdx; render(); return;
+  }
+  const allTruth=lastPlay.cards.every(c=>c.rank===lastPlay.claimRank);
+  addLog(`${challenger.name} called BS!`,'call');
+  addLog(`Revealed: ${lastPlay.cards.map(cardLabel).join(', ')}.`,'system');
+  if(allTruth){
+    challenger.hand.push(...pile); sortHand(challenger.hand);
+    addLog(`${lastPlay.playerName} was telling the truth. ${challenger.name} takes the pile.`,'truth');
+  }else{
+    players[lastPlay.playerIdx].hand.push(...pile); sortHand(players[lastPlay.playerIdx].hand);
+    addLog(`BS confirmed. ${lastPlay.playerName} takes the pile.`,'lie');
+  }
+  pile=[]; pendingChallenge=false; nextRank(); currentPlayer=challengerIdx;
+  checkWinnerAfterChallenge(); render();
+}
+function checkWinnerAfterChallenge(){
+  const winner=players.find(p=>p.hand.length===0);
+  if(winner) showWinner(winner);
+}
+function showWinner(winner){
+  gameOver=true;
+  document.getElementById('winnerTitle').textContent=`${winner.name} wins!`;
+  document.getElementById('winnerDetails').textContent=winner.isHuman?'You successfully got rid of all your cards.':`${winner.name} got rid of all cards first.`;
+  document.getElementById('winnerOverlay').style.display='flex';
+}
+function cardLabel(c){return `${c.rank}${c.suit}`;}
+document.getElementById('playBtn').onclick=humanPlay;
+document.getElementById('bsBtn').onclick=()=>resolveChallenge(0,true);
+document.getElementById('passBtn').onclick=()=>resolveChallenge(0,false);
+document.getElementById('newGameBtn').onclick=newGame;
+document.getElementById('againBtn').onclick=newGame;
+newGame();
+</script>
+</body>
+</html>
