@@ -159,7 +159,7 @@ body{
 .center-stage{
   position:absolute;
   left:50%;
-  top:49%;
+  top:53%;
   transform:translate(-50%,-50%);
   z-index:5;
   text-align:center;
@@ -167,7 +167,7 @@ body{
 .claim-banner{
   min-width:350px;
   padding:14px 22px;
-  margin-bottom:18px;
+  margin-bottom:12px;
   background:rgba(0,0,0,.72);
   border:2px solid rgba(255,255,255,.25);
   border-radius:12px;
@@ -240,11 +240,18 @@ body{
   0%{transform:scale(.3) rotateY(180deg);opacity:0}
   100%{transform:scale(1) rotateY(0deg);opacity:1}
 }
+.rank-strip-label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:#999;
+  margin-bottom:2px;
+}
 .rank-strip{
   display:flex;
   justify-content:center;
   gap:6px;
-  margin-bottom:12px;
+  margin-bottom:8px;
 }
 .rank-chip{
   min-width:32px;
@@ -661,6 +668,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .reveal-card{width:44px;height:64px}
   .reveal-card .rank{font-size:15px}
   .reveal-card .suit{font-size:15px}
+  .rank-strip-label{font-size:9px;margin-bottom:3px}
   .rank-strip{gap:4px;margin-bottom:8px}
   .rank-chip{min-width:24px;padding:4px 5px;font-size:11px}
   .side-panel{
@@ -680,6 +688,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <div class="table-wrap">
   <div class="table" id="table">
     <div class="center-stage">
+      <div class="rank-strip-label">Your upcoming ranks</div>
       <div class="rank-strip" id="rankStrip"></div>
       <div class="claim-banner" id="turnText">Loading...</div>
       <div class="reveal-stack" id="revealStack"></div>
@@ -1024,8 +1033,10 @@ function playWinSound(){
 function renderRankStrip(){
   const el=document.getElementById('rankStrip');
   el.innerHTML='';
+  const n=PLAYERS_CONFIG.length;
+  const offset=(n-state.currentPlayer)%n;
   for(let i=0;i<5;i++){
-    const r=ranks[(state.requiredRankIndex+i)%ranks.length];
+    const r=ranks[(state.requiredRankIndex+offset+i*n)%ranks.length];
     const chip=document.createElement('div');
     chip.className='rank-chip'+(i===0?' current':'');
     chip.textContent=r;
