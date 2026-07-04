@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BS Card Game v6 Table UI</title>
+<title>BS Card Game v8 Table UI</title>
 <style>
 *{box-sizing:border-box}
 :root{
@@ -29,28 +29,17 @@ body{
   position:relative;
   width:100vw;
   height:100vh;
-  padding:18px 300px 18px 250px;
+  padding:18px 300px 18px 60px;
 }
-.scoreboard,.claim-card,.side-panel,.deck-panel,.menu-buttons button,.rules-btn{
+.claim-card,.side-panel,.deck-panel,.menu-buttons button,.rules-btn{
   background:rgba(8,8,8,.78);
   border:2px solid rgba(217,164,65,.55);
   box-shadow:0 8px 22px rgba(0,0,0,.4), inset 0 0 18px rgba(255,255,255,.04);
   border-radius:14px;
 }
-.scoreboard{
-  position:absolute;
-  top:18px;
-  left:18px;
-  width:180px;
-  padding:14px 18px;
-  z-index:10;
-}
-.score-title{font-size:14px;font-weight:900;color:#ffe56b;text-align:center;margin-bottom:12px}
-.score-row{display:flex;justify-content:space-between;font-size:20px;font-weight:900;margin:12px 0}
-.score-you{color:var(--blue)} .score-amy{color:#ff8a8a} .score-carl{color:var(--blue)} .score-harry{color:var(--green)}
 .table{
   position:absolute;
-  left:250px;
+  left:60px;
   right:300px;
   top:12px;
   bottom:28px;
@@ -80,8 +69,8 @@ body{
   gap:10px;
 }
 .seat.top{left:50%;top:2px;transform:translateX(-50%);flex-direction:column}
-.seat.left{left:18px;top:45%;transform:translateY(-50%);flex-direction:column}
-.seat.right{right:18px;top:45%;transform:translateY(-50%);flex-direction:column}
+.seat.left{left:18px;top:42%;transform:translateY(-50%);flex-direction:column}
+.seat.right{right:18px;top:42%;transform:translateY(-50%);flex-direction:column}
 .seat.bottom{left:50%;bottom:-8px;transform:translateX(-50%);flex-direction:column}
 .avatar{
   width:100px;
@@ -106,10 +95,10 @@ body{
   min-width:160px;
   max-width:210px;
 }
-.left .info-bubble,.right .info-bubble{position:absolute;top:115px}
+.left .info-bubble,.right .info-bubble{position:absolute;top:112px}
 .left .info-bubble{left:-4px}
 .right .info-bubble{right:-4px}
-.top .info-bubble{position:absolute;left:108px;top:10px}
+.top .info-bubble{position:absolute;left:110px;top:10px}
 .bottom .info-bubble{display:none}
 .player-name{font-size:18px;font-weight:900;margin-bottom:4px}
 .player-trait{font-size:14px;line-height:1.25;opacity:.9}
@@ -124,9 +113,9 @@ body{
 }
 .count-num{font-size:26px;line-height:1}
 .count-label{font-size:13px;margin-top:3px}
-.top .count-badge{position:absolute;left:195px;top:98px}
-.left .count-badge{margin-top:140px}
-.right .count-badge{margin-top:140px}
+.top .count-badge{position:absolute;left:200px;top:96px}
+.left .count-badge{margin-top:100px}
+.right .count-badge{margin-top:100px}
 .bottom .count-badge{
   margin-top:-6px;
   background:#0859b8;
@@ -139,13 +128,13 @@ body{
   z-index:3;
   pointer-events:none;
 }
-.ai-cards.top-cards{left:50%;top:172px;transform:translateX(-50%);height:105px;align-items:flex-start}
-.ai-cards.left-cards{left:120px;top:44%;transform:translateY(-50%) rotate(90deg);height:105px}
-.ai-cards.right-cards{right:120px;top:44%;transform:translateY(-50%) rotate(-90deg);height:105px}
+.ai-cards.top-cards{left:50%;top:150px;transform:translateX(-50%);height:80px;align-items:flex-start}
+.ai-cards.left-cards{left:126px;top:42%;transform:translateY(-50%) rotate(90deg);height:80px}
+.ai-cards.right-cards{right:126px;top:42%;transform:translateY(-50%) rotate(-90deg);height:80px}
 .card-back{
   width:50px;
   height:74px;
-  margin-left:-22px;
+  margin-left:-14px;
   border-radius:7px;
   background:
     linear-gradient(135deg,#1a3d70,#3b68a3);
@@ -153,6 +142,7 @@ body{
   box-shadow:0 5px 10px rgba(0,0,0,.35);
   position:relative;
 }
+.card-back:first-child{margin-left:0}
 .card-back:before{
   content:"BS";
   position:absolute;
@@ -223,6 +213,16 @@ body{
   gap:18px;
   margin-top:20px;
 }
+#playControls{
+  flex-direction:column;
+  gap:14px;
+}
+.claim-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
 button,select{
   border:none;
   border-radius:10px;
@@ -233,19 +233,88 @@ button,select{
 button{cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.35)}
 button:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.35)}
 button:disabled{opacity:.45;cursor:not-allowed}
-#playBtn{background:#f3cc62;color:#1d1608}
 #bsBtn{background:#2d8f21;color:white;border:2px solid #9cf18d}
 #passBtn{background:#8e3227;color:white;border:2px solid #e98675}
 #newGameBtn{background:#ddd;color:#222;font-size:14px;padding:9px 13px}
-select{background:#eee;color:#222;font-size:15px}
+.claim-btn{
+  background:#3a3a3a;
+  color:#eee;
+  font-size:14px;
+  padding:10px 14px;
+  border:2px solid rgba(255,255,255,.18);
+  box-shadow:0 4px 0 rgba(0,0,0,.35);
+}
+.claim-btn.active{
+  background:#f3cc62;
+  color:#1d1608;
+  border-color:#fff;
+}
 .turn-hint{margin-top:12px;font-size:15px;color:#ddd}
 .turn-hint b{color:#ffd84e}
+.countdown{margin-top:6px;font-size:13px;color:#ffd84e;font-weight:700}
+.bs-call-anim{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  z-index:200;
+  opacity:0;
+}
+.bs-call-anim span{
+  font-size:150px;
+  font-weight:900;
+  font-style:italic;
+  color:#ff3b3b;
+  -webkit-text-stroke:4px #7a0000;
+  text-shadow:0 0 50px rgba(255,40,40,.9), 0 8px 0 #4a0000;
+  display:inline-block;
+}
+.bs-call-anim.show{animation:bsFade 1300ms ease-out forwards}
+.bs-call-anim.show span{animation:bsPop 1300ms cubic-bezier(.17,.67,.3,1.6) forwards}
+@keyframes bsFade{
+  0%{opacity:0}
+  8%{opacity:1}
+  75%{opacity:1}
+  100%{opacity:0}
+}
+@keyframes bsPop{
+  0%{transform:scale(.2) rotate(-18deg)}
+  25%{transform:scale(1.35) rotate(7deg)}
+  42%{transform:scale(.95) rotate(-3deg)}
+  58%{transform:scale(1.1) rotate(2deg)}
+  75%{transform:scale(1) rotate(0deg)}
+  100%{transform:scale(1) rotate(0deg)}
+}
+@keyframes tableShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-9px,5px)}
+  40%{transform:translate(8px,-6px)}
+  60%{transform:translate(-7px,4px)}
+  80%{transform:translate(6px,-3px)}
+}
+.table-wrap.shake{animation:tableShake 400ms ease}
+.fly-layer{position:fixed;inset:0;pointer-events:none;z-index:150}
+.fly-card{
+  position:fixed;
+  width:46px;
+  height:64px;
+  margin-left:-23px;
+  margin-top:-32px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#244b82,#315f9b);
+  border:2px solid #eee;
+  box-shadow:0 4px 10px rgba(0,0,0,.4);
+  opacity:1;
+  transition:transform .65s cubic-bezier(.3,.6,.3,1), opacity .65s ease;
+}
 .hand-panel{
   position:absolute;
   left:50%;
   bottom:25px;
   transform:translateX(-50%);
-  width:720px;
+  width:860px;
   z-index:8;
   text-align:center;
 }
@@ -258,12 +327,14 @@ select{background:#eee;color:#222;font-size:15px}
   letter-spacing:.5px;
 }
 .cards{
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-  min-height:122px;
+  position:relative;
+  width:820px;
+  height:128px;
+  margin:0 auto;
 }
 .card{
+  position:absolute;
+  top:12px;
   width:68px;
   height:98px;
   background:#fff;
@@ -274,13 +345,12 @@ select{background:#eee;color:#222;font-size:15px}
   flex-direction:column;
   justify-content:space-between;
   padding:6px;
-  margin-left:-10px;
   cursor:pointer;
   user-select:none;
   font-weight:900;
   box-shadow:0 7px 12px rgba(0,0,0,.35);
   transform-origin:bottom center;
-  transition:transform .12s ease, outline .12s ease;
+  transition:transform .12s ease, outline .12s ease, left .15s ease;
 }
 .card.red{color:#b61919}
 .card .rank{font-size:22px;line-height:1}
@@ -288,6 +358,7 @@ select{background:#eee;color:#222;font-size:15px}
 .card.selected{
   transform:translateY(-22px) rotate(0deg)!important;
   outline:4px solid #ffd84e;
+  z-index:50;
 }
 .side-panel{
   position:absolute;
@@ -367,7 +438,7 @@ select{background:#eee;color:#222;font-size:15px}
   font-size:18px;
   padding:15px;
 }
-.winner{
+.overlay{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.75);
@@ -376,56 +447,52 @@ select{background:#eee;color:#222;font-size:15px}
   justify-content:center;
   z-index:99;
 }
-.winner-box{
+.overlay-box{
   background:#f7f7f7;
   color:#111;
   border-radius:20px;
   padding:28px;
   text-align:center;
   width:min(440px,92vw);
+  max-height:80vh;
+  overflow-y:auto;
 }
-@media(max-width:1050px){
+.overlay-box.rules{text-align:left}
+.overlay-box.rules li{margin-bottom:10px;line-height:1.4}
+@media(max-width:1200px){
   body{overflow:auto}
-  .table-wrap{height:1000px;width:1050px}
+  .table-wrap{height:1000px;width:1200px}
 }
 </style>
 </head>
 <body>
 <div class="table-wrap">
-  <div class="scoreboard">
-    <div class="score-title">GAME TO 100</div>
-    <div class="score-row score-you"><span>YOU</span><span>0</span></div>
-    <div class="score-row score-amy"><span>AMY</span><span>0</span></div>
-    <div class="score-row score-carl"><span>CARL</span><span>0</span></div>
-    <div class="score-row score-harry"><span>HARRY</span><span>0</span></div>
-  </div>
-
-  <div class="table">
+  <div class="table" id="table">
     <div class="seat top" id="seat-amy">
-      <div class="avatar">👩</div>
+      <div class="avatar" id="avatar-amy"></div>
       <div class="info-bubble">
-        <div class="player-name" style="color:#ff8585">Aggressive Amy</div>
-        <div class="player-trait">Bluffs a lot and calls BS often.</div>
+        <div class="player-name" id="name-amy"></div>
+        <div class="player-trait" id="trait-amy"></div>
       </div>
       <div class="count-badge"><div class="count-num" id="count-amy">13</div><div class="count-label">CARDS</div></div>
     </div>
     <div class="ai-cards top-cards" id="cards-amy"></div>
 
     <div class="seat left" id="seat-harry">
-      <div class="avatar">👨</div>
+      <div class="avatar" id="avatar-harry"></div>
       <div class="info-bubble">
-        <div class="player-name" style="color:#83d65b">Honest Harry</div>
-        <div class="player-trait">Rarely bluffs and rarely calls BS.</div>
+        <div class="player-name" id="name-harry"></div>
+        <div class="player-trait" id="trait-harry"></div>
       </div>
       <div class="count-badge"><div class="count-num" id="count-harry">13</div><div class="count-label">CARDS</div></div>
     </div>
     <div class="ai-cards left-cards" id="cards-harry"></div>
 
     <div class="seat right" id="seat-carl">
-      <div class="avatar">👨‍💼</div>
+      <div class="avatar" id="avatar-carl"></div>
       <div class="info-bubble">
-        <div class="player-name" style="color:#3da0ff">Calculator Carl</div>
-        <div class="player-trait">Tracks the cards and calls BS smart.</div>
+        <div class="player-name" id="name-carl"></div>
+        <div class="player-trait" id="trait-carl"></div>
       </div>
       <div class="count-badge"><div class="count-num" id="count-carl">13</div><div class="count-label">CARDS</div></div>
     </div>
@@ -435,19 +502,19 @@ select{background:#eee;color:#222;font-size:15px}
       <div class="claim-banner" id="turnText">Loading...</div>
       <div class="pile-stack" id="pileStack"></div>
       <div class="action-row" id="playControls">
-        <select id="claimCount">
-          <option value="1">Claim 1 card</option>
-          <option value="2">Claim 2 cards</option>
-          <option value="3">Claim 3 cards</option>
-          <option value="4">Claim 4 cards</option>
-        </select>
-        <button id="playBtn">PLAY SELECTED</button>
+        <div class="claim-buttons" id="claimButtons">
+          <button class="claim-btn" data-count="1">Claim 1 Card</button>
+          <button class="claim-btn" data-count="2">Claim 2 Cards</button>
+          <button class="claim-btn" data-count="3">Claim 3 Cards</button>
+          <button class="claim-btn" data-count="4">Claim 4 Cards</button>
+        </div>
       </div>
       <div class="action-row" id="challengeControls" style="display:none;">
         <button id="bsBtn">CALL BS</button>
         <button id="passBtn">PASS</button>
       </div>
       <div class="turn-hint" id="instructionText"></div>
+      <div class="countdown" id="challengeCountdown"></div>
     </div>
 
     <div class="seat bottom" id="seat-you">
@@ -471,51 +538,92 @@ select{background:#eee;color:#222;font-size:15px}
     <div id="pileInfo">Pile: 0 cards<br>Last claim: none</div>
   </div>
 
-  <button class="rules-btn">📖 RULES</button>
+  <button class="rules-btn" id="rulesBtn">📖 RULES</button>
 
   <div class="deck-panel">
-    <div>DECK</div>
+    <div>PILE</div>
     <div class="deck-mini"></div>
     <div id="deckCount">0 CARDS</div>
   </div>
 
   <div class="menu-buttons">
     <button id="newGameBtn">NEW GAME</button>
-    <button>MAIN MENU</button>
   </div>
 </div>
 
-<div class="winner" id="winnerOverlay">
-  <div class="winner-box">
+<div class="bs-call-anim" id="bsCallAnim"><span>BS!</span></div>
+
+<div class="overlay" id="winnerOverlay">
+  <div class="overlay-box">
     <h2 id="winnerTitle">Winner!</h2>
     <p id="winnerDetails"></p>
-    <button id="againBtn">Play Again</button>
+    <button id="continueBtn">Play Again</button>
+  </div>
+</div>
+
+<div class="overlay" id="rulesOverlay">
+  <div class="overlay-box rules">
+    <h2>How to play BS</h2>
+    <ul>
+      <li>All 52 cards are dealt out evenly. On your turn, play 1-4 face-down cards claiming they are all the required rank.</li>
+      <li>The required rank starts at Ace and advances (A, 2, 3, ... K, A, ...) after every turn, whether or not anyone challenges.</li>
+      <li>After a play, every other player gets the same window of time to call "BS" on the claim — it's a race, and it only takes one caller.</li>
+      <li>If someone calls BS: the cards are revealed. If the claim was false, the liar takes the whole pile. If it was true, the caller takes the whole pile.</li>
+      <li>If nobody calls BS before time runs out, the pile stays and play continues to the next player.</li>
+      <li>First player to get rid of all of their cards wins. That's it — no points.</li>
+    </ul>
+    <button id="closeRulesBtn">Got it</button>
   </div>
 </div>
 
 <script>
 const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const suits = ['♠','♥','♦','♣'];
-const aiTemplates = [
-  { name: 'Honest Harry', trait: 'Low bluff, cautious calls', bluff: .12, call: .18, style: 'Honest', risk: 'Low', key:'harry' },
-  { name: 'Aggressive Amy', trait: 'Bluffs often and calls often', bluff: .48, call: .58, style: 'Aggressive', risk: 'High', key:'amy' },
-  { name: 'Calculator Carl', trait: 'Tracks ranks and calls smarter', bluff: .26, call: .32, style: 'Strategic', risk: 'Medium', counter: true, key:'carl' }
+
+// Turn order is clockwise around the table starting at the human seat (bottom -> left -> top -> right).
+const PLAYERS_CONFIG = [
+  { key:'you', seat:'bottom', name:'You', isHuman:true },
+  { key:'harry', seat:'left', name:'Honest Harry', avatar:'👨', trait:'Rarely bluffs and rarely calls BS.', bluff:.12, call:.18 },
+  { key:'amy', seat:'top', name:'Aggressive Amy', avatar:'👩', trait:'Bluffs a lot and calls BS often.', bluff:.48, call:.58 },
+  { key:'carl', seat:'right', name:'Calculator Carl', avatar:'👨‍💼', trait:'Tracks the cards and calls BS smart.', bluff:.26, call:.32, counter:true }
 ];
-let players, currentPlayer, requiredRankIndex, pile, lastPlay, pendingChallenge, selectedIds, gameOver;
+
+const CLAIM_DISPLAY_DELAY = 1400;
+const CHALLENGE_WINDOW = 5000;
+const AI_CHALLENGE_MIN_DELAY = 1000;
+const AI_CHALLENGE_MAX_DELAY = 4400;
+const AI_TURN_DELAY_MIN = 2000;
+const AI_TURN_DELAY_RANGE = 1200;
+const BS_CALL_ANIM_DELAY = 1300;
+
+let state = null;
+let generation = 0;
 let cardId = 1;
-const CLAIM_DISPLAY_DELAY = 2000;
-const CHALLENGE_WINDOW = 4000;
-const REVEAL_DELAY = 1500;
+let countdownTimer = null;
 
 const handEl = document.getElementById('hand');
 const logEl = document.getElementById('log');
 const turnText = document.getElementById('turnText');
 const instructionText = document.getElementById('instructionText');
+const countdownEl = document.getElementById('challengeCountdown');
 const pileInfo = document.getElementById('pileInfo');
 const humanCount = document.getElementById('humanCount');
 const selectedText = document.getElementById('selectedText');
 const playControls = document.getElementById('playControls');
 const challengeControls = document.getElementById('challengeControls');
+const bsBtn = document.getElementById('bsBtn');
+const passBtn = document.getElementById('passBtn');
+
+function playerCfg(idx){ return PLAYERS_CONFIG[idx]; }
+function otherPlayersInTurnOrder(idx){
+  const order=[];
+  for(let i=1;i<PLAYERS_CONFIG.length;i++) order.push((idx+i)%PLAYERS_CONFIG.length);
+  return order;
+}
+function scheduleTimer(fn, delay){
+  const gen = generation;
+  setTimeout(()=>{ if(gen===generation) fn(); }, delay);
+}
 
 function createDeck(){
   const deck=[];
@@ -526,78 +634,122 @@ function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
   return arr;
 }
+function sortHand(hand){hand.sort((a,b)=>ranks.indexOf(a.rank)-ranks.indexOf(b.rank)||suits.indexOf(a.suit)-suits.indexOf(b.suit));}
+
+function initSeats(){
+  PLAYERS_CONFIG.forEach(p=>{
+    if(p.isHuman) return;
+    document.getElementById('avatar-'+p.key).textContent=p.avatar;
+    document.getElementById('name-'+p.key).textContent=p.name;
+    document.getElementById('trait-'+p.key).textContent=p.trait;
+  });
+}
+
 function newGame(){
-  cardId=1;
+  generation++;
   const deck=createDeck();
-  players=[
-    {name:'You',isHuman:true,hand:[],trait:'Human Player',key:'you'},
-    { ...aiTemplates[1], isHuman:false, hand:[] },
-    { ...aiTemplates[2], isHuman:false, hand:[] },
-    { ...aiTemplates[0], isHuman:false, hand:[] }
-  ];
-  let p=0;
-  while(deck.length){players[p%players.length].hand.push(deck.pop());p++;}
-  players.forEach(pl=>sortHand(pl.hand));
-  currentPlayer=0; requiredRankIndex=0; pile=[]; lastPlay=null; pendingChallenge=false; selectedIds=new Set(); gameOver=false;
+  const hands={};
+  PLAYERS_CONFIG.forEach(p=>hands[p.key]=[]);
+  let i=0;
+  while(deck.length){ hands[playerCfg(i%PLAYERS_CONFIG.length).key].push(deck.pop()); i++; }
+  Object.values(hands).forEach(sortHand);
+  state={
+    phase:'play', // 'play' | 'challenge' | 'game-over'
+    hands,
+    currentPlayer:0,
+    requiredRankIndex:0,
+    pile:[],
+    lastPlay:null,
+    challengeResolved:false,
+    challengeDeadline:0,
+    humanPassed:false,
+    selectedIds:new Set()
+  };
+  cardId=1;
+  stopCountdown();
   logEl.innerHTML='';
   document.getElementById('winnerOverlay').style.display='none';
   addLog('New game started. You go first. Required rank is Aces.','system');
-  addLog('V6 rebuilt the table UI around seats, card backs, pile, and claim banner.','system');
   render();
 }
-function sortHand(hand){hand.sort((a,b)=>ranks.indexOf(a.rank)-ranks.indexOf(b.rank)||suits.indexOf(a.suit)-suits.indexOf(b.suit));}
-function currentRank(){return ranks[requiredRankIndex];}
-function nextRank(){requiredRankIndex=(requiredRankIndex+1)%ranks.length;}
-function nextPlayer(){currentPlayer=(currentPlayer+1)%players.length;}
+function currentRank(){return ranks[state.requiredRankIndex];}
+function nextRank(){state.requiredRankIndex=(state.requiredRankIndex+1)%ranks.length;}
 function addLog(text,type='system'){const div=document.createElement('div');div.className=type;div.textContent=text;logEl.prepend(div);}
-function render(){renderPlayers();renderHand();updateCenter();renderPile();}
+function cardLabel(c){return `${c.rank}${c.suit}`;}
+function verbTakes(idx){return idx===0?'take':'takes';}
+
+function render(){renderPlayers();renderHand();updateCenter();renderPile();renderClaimButtons();}
+function renderClaimButtons(){
+  const canPlay=state.phase==='play'&&state.currentPlayer===0;
+  const n=state.selectedIds.size;
+  document.querySelectorAll('.claim-btn').forEach(btn=>{
+    const matches=canPlay&&n>0&&Number(btn.dataset.count)===n;
+    btn.disabled=!matches;
+    btn.classList.toggle('active',matches);
+  });
+}
+
 function renderPlayers(){
   document.querySelectorAll('.seat').forEach(s=>s.classList.remove('active'));
-  if(!pendingChallenge) {
-    const key=players[currentPlayer].key;
-    const seat=document.getElementById('seat-'+key);
+  let activeIdx=null;
+  if(state.phase==='play') activeIdx=state.currentPlayer;
+  if(activeIdx!==null){
+    const seat=document.getElementById('seat-'+playerCfg(activeIdx).key);
     if(seat) seat.classList.add('active');
   }
-  humanCount.textContent=`${players[0].hand.length} cards`;
-  document.getElementById('count-amy').textContent=players.find(p=>p.key==='amy').hand.length;
-  document.getElementById('count-carl').textContent=players.find(p=>p.key==='carl').hand.length;
-  document.getElementById('count-harry').textContent=players.find(p=>p.key==='harry').hand.length;
-  renderBacks('amy'); renderBacks('carl'); renderBacks('harry');
+  humanCount.textContent=`${state.hands.you.length} cards`;
+  PLAYERS_CONFIG.forEach(p=>{
+    if(p.isHuman) return;
+    document.getElementById('count-'+p.key).textContent=state.hands[p.key].length;
+    renderBacks(p.key);
+  });
 }
 function renderBacks(key){
-  const pl=players.find(p=>p.key===key);
   const el=document.getElementById('cards-'+key);
   el.innerHTML='';
-  const shown=Math.min(pl.hand.length,13);
-  const mid=(shown-1)/2;
+  const shown=Math.min(state.hands[key].length,4);
   for(let i=0;i<shown;i++){
     const c=document.createElement('div');
     c.className='card-back';
-    c.style.transform=`rotate(${(i-mid)*4}deg) translateY(${Math.abs(i-mid)*1.5}px)`;
-    c.style.zIndex=i;
+    c.style.transform=`rotate(${(i-(shown-1)/2)*5}deg)`;
     el.appendChild(c);
   }
 }
 function renderHand(){
   handEl.innerHTML='';
-  const hand=players[0].hand;
-  const mid=(hand.length-1)/2;
+  const hand=state.hands.you;
+  const canSelect=state.phase==='play'&&state.currentPlayer===0;
+  const containerWidth=820;
+  const cardWidth=68;
+  const minGap=16;
+  const idealStep=cardWidth+minGap;
+  const n=hand.length;
+  let step=idealStep;
+  if(n>1){
+    const idealTotal=cardWidth+(n-1)*idealStep;
+    if(idealTotal>containerWidth) step=(containerWidth-cardWidth)/(n-1);
+  }
+  const totalWidth=n>0?cardWidth+(n-1)*step:0;
+  const startX=(containerWidth-totalWidth)/2;
+  const mid=(n-1)/2;
   hand.forEach((card,i)=>{
     const div=document.createElement('div');
-    div.className='card '+((card.suit==='♥'||card.suit==='♦')?'red ':'')+(selectedIds.has(card.id)?'selected':'');
-    const rotate=(i-mid)*4.2;
-    const lift=Math.abs(i-mid)*1.7;
-    if(!selectedIds.has(card.id)) div.style.transform=`rotate(${rotate}deg) translateY(${lift}px)`;
+    div.className='card '+((card.suit==='♥'||card.suit==='♦')?'red ':'')+(state.selectedIds.has(card.id)?'selected':'');
+    div.style.left=(startX+i*step)+'px';
+    if(!state.selectedIds.has(card.id)){
+      const rotate=step<cardWidth?(i-mid)*2.5:0;
+      div.style.transform=`rotate(${rotate}deg)`;
+    }
     div.innerHTML=`<div class="rank">${card.rank}</div><div class="suit">${card.suit}</div><div class="rank" style="text-align:right">${card.rank}</div>`;
-    div.onclick=()=>toggleCard(card.id);
+    if(canSelect) div.onclick=()=>toggleCard(card.id);
     handEl.appendChild(div);
   });
-  selectedText.textContent=`Selected: ${selectedIds.size}`;
+  selectedText.textContent=`Selected: ${state.selectedIds.size}`;
 }
 function renderPile(){
   const stack=document.getElementById('pileStack');
   stack.innerHTML='';
-  const count=Math.max(1,Math.min(8,pile.length||1));
+  const count=Math.max(1,Math.min(8,state.pile.length||1));
   for(let i=0;i<count;i++){
     const c=document.createElement('div');
     c.className='pile-card';
@@ -606,127 +758,273 @@ function renderPile(){
     c.style.zIndex=i;
     stack.appendChild(c);
   }
-  document.getElementById('deckCount').textContent=`${pile.length} CARDS`;
+  document.getElementById('deckCount').textContent=`${state.pile.length} CARDS`;
 }
 function updateCenter(){
-  const actor=players[currentPlayer];
-  const lastClaimText=lastPlay?`${lastPlay.playerName} played ${lastPlay.cards.length} card(s)<br>claiming <span class="rank-word">${lastPlay.claimRank}${lastPlay.cards.length>1?'s':''}</span>.`:'No claim yet';
-  pileInfo.innerHTML=lastPlay?`${lastPlay.cards.length} card(s) claiming <b>${lastPlay.claimRank}${lastPlay.cards.length>1?'s':''}</b>.<br>Pile: ${pile.length} cards`:`Pile: ${pile.length} cards<br>Last claim: none`;
+  const lastPlay=state.lastPlay;
+  pileInfo.innerHTML=lastPlay?`${lastPlay.cards.length} card(s) claiming <b>${lastPlay.claimRank}${lastPlay.cards.length>1?'s':''}</b>.<br>Pile: ${state.pile.length} cards`:`Pile: ${state.pile.length} cards<br>Last claim: none`;
 
-  if(pendingChallenge){
-    const challenger=players[currentPlayer];
-    turnText.innerHTML=lastClaimText;
-    instructionText.innerHTML=challenger.isHuman?`What will <b>YOU</b> do?`:`${challenger.name} is deciding...`;
+  if(state.phase==='challenge'){
+    const humanIsChallenger=lastPlay.playerIdx!==0;
+    turnText.innerHTML=`${lastPlay.playerName} played ${lastPlay.cards.length} card(s)<br>claiming <span class="rank-word">${lastPlay.claimRank}${lastPlay.cards.length>1?'s':''}</span>.`;
     playControls.style.display='none';
-    challengeControls.style.display=challenger.isHuman?'flex':'none';
-    if(!challenger.isHuman&&!gameOver) setTimeout(aiChallengeDecision,4000);
+    challengeControls.style.display=humanIsChallenger?'flex':'none';
+    if(humanIsChallenger){
+      bsBtn.disabled=state.humanPassed;
+      passBtn.disabled=state.humanPassed;
+    }
+    instructionText.innerHTML=humanIsChallenger?(state.humanPassed?'You passed. Waiting to see if anyone else calls BS...':'Anyone can call BS right now — decide!'):'Waiting to see if anyone calls BS...';
+    updateCountdownText();
     return;
   }
 
-  turnText.innerHTML=`<b>${actor.name}</b>'s turn<br><span class="rank-word">Claiming ${currentRank()}s</span>`;
-  instructionText.innerHTML=actor.isHuman?`Select cards, choose a claim count, then play.`:`${actor.name} is thinking...`;
-  playControls.style.display=actor.isHuman?'flex':'none';
-  challengeControls.style.display='none';
-  if(!actor.isHuman&&!gameOver) setTimeout(aiPlayTurn,2500 + Math.random()*1000);
+  if(state.phase==='play'){
+    const actor=playerCfg(state.currentPlayer);
+    const turnLabel=actor.isHuman?'Your turn':`${actor.name}'s turn`;
+    turnText.innerHTML=`<b>${turnLabel}</b><br><span class="rank-word">Claiming ${currentRank()}s</span>`;
+    instructionText.innerHTML=actor.isHuman?`Select cards — the matching claim button lights up. Click it to play.`:`${actor.name} is thinking...`;
+    countdownEl.textContent='';
+    playControls.style.display=actor.isHuman?'flex':'none';
+    challengeControls.style.display='none';
+    if(!actor.isHuman) scheduleTimer(aiPlayTurn,AI_TURN_DELAY_MIN+Math.random()*AI_TURN_DELAY_RANGE);
+  }
 }
 function toggleCard(id){
-  if(gameOver||pendingChallenge||currentPlayer!==0)return;
-  if(selectedIds.has(id)) selectedIds.delete(id);
-  else if(selectedIds.size<4) selectedIds.add(id);
+  if(state.phase!=='play'||state.currentPlayer!==0)return;
+  if(state.selectedIds.has(id)) state.selectedIds.delete(id);
+  else if(state.selectedIds.size<4) state.selectedIds.add(id);
   renderHand();
+  renderClaimButtons();
 }
-function humanPlay(){
-  if(currentPlayer!==0||pendingChallenge||gameOver)return;
-  const countClaimed=Number(document.getElementById('claimCount').value);
-  const selected=players[0].hand.filter(c=>selectedIds.has(c.id));
+function attemptPlay(count){
+  if(state.phase!=='play'||state.currentPlayer!==0)return;
+  const selected=state.hands.you.filter(c=>state.selectedIds.has(c.id));
   if(selected.length===0){addLog('Select at least one card first.','system');return;}
-  if(selected.length!==countClaimed){addLog('Your claimed number must match the number of selected cards.','system');return;}
+  if(selected.length!==count){addLog('Your claimed number must match the number of selected cards.','system');return;}
   makePlay(0,selected,currentRank());
 }
 function makePlay(playerIdx,cards,claimRank){
-  const pl=players[playerIdx];
-  cards.forEach(card=>{const idx=pl.hand.findIndex(c=>c.id===card.id);if(idx>=0)pl.hand.splice(idx,1);});
-  pile.push(...cards);
-  lastPlay={playerIdx,playerName:pl.name,cards:[...cards],claimRank};
-  selectedIds.clear();
-  addLog(`${pl.name} played ${cards.length} card(s) claiming ${claimRank}${cards.length>1?'s':''}.`,'play');
-  nextPlayer();
-  turnText.innerHTML = `<b>${pl.name.toUpperCase()} CLAIMS</b><br><span class="rank-word">${cards.length} × ${claimRank}</span>`;
-  instructionText.innerHTML = 'Giving everyone a chance to call BS...';
-  setTimeout(()=>{
-    pendingChallenge=true;
-    render();
-  }, CLAIM_DISPLAY_DELAY);
+  const cfg=playerCfg(playerIdx);
+  const hand=state.hands[cfg.key];
+  cards.forEach(card=>{const idx=hand.findIndex(c=>c.id===card.id);if(idx>=0)hand.splice(idx,1);});
+  state.pile.push(...cards);
+  state.lastPlay={playerIdx,playerName:cfg.name,cards:[...cards],claimRank};
+  state.selectedIds.clear();
+  addLog(`${cfg.name} played ${cards.length} card(s) claiming ${claimRank}${cards.length>1?'s':''}.`,'play');
+  turnText.innerHTML=`<b>${cfg.name.toUpperCase()} CLAIMS</b><br><span class="rank-word">${cards.length} × ${claimRank}</span>`;
+  instructionText.innerHTML='Giving everyone a chance to call BS...';
+  countdownEl.textContent='';
+  playControls.style.display='none';
+  challengeControls.style.display='none';
+  renderPlayers();renderHand();renderPile();
+  scheduleTimer(()=>startChallengePhase(playerIdx), CLAIM_DISPLAY_DELAY);
+}
+function startChallengePhase(actorIdx){
+  state.phase='challenge';
+  state.challengeResolved=false;
+  state.humanPassed=false;
+  state.challengeDeadline=Date.now()+CHALLENGE_WINDOW;
+  const others=otherPlayersInTurnOrder(actorIdx);
+  render();
+  others.forEach(idx=>{
+    if(playerCfg(idx).isHuman) return;
+    const delay=AI_CHALLENGE_MIN_DELAY+Math.random()*(AI_CHALLENGE_MAX_DELAY-AI_CHALLENGE_MIN_DELAY);
+    scheduleTimer(()=>aiChallengeDecision(idx),delay);
+  });
+  scheduleTimer(()=>{
+    if(state.phase==='challenge'&&!state.challengeResolved) noOneChallenged(actorIdx);
+  }, CHALLENGE_WINDOW);
+  startCountdown();
 }
 function aiPlayTurn(){
-  if(gameOver||pendingChallenge||players[currentPlayer].isHuman)return;
-  const ai=players[currentPlayer];
+  if(state.phase!=='play'||playerCfg(state.currentPlayer).isHuman)return;
+  const idx=state.currentPlayer;
+  const cfg=playerCfg(idx);
+  const hand=state.hands[cfg.key];
   const rank=currentRank();
-  const matching=ai.hand.filter(c=>c.rank===rank);
+  const matching=hand.filter(c=>c.rank===rank);
   let cardsToPlay=[];
-  const willBluff=matching.length===0||Math.random()<ai.bluff;
+  const willBluff=matching.length===0||Math.random()<cfg.bluff;
   if(!willBluff&&matching.length>0){
     const n=Math.min(matching.length,1+Math.floor(Math.random()*matching.length));
     cardsToPlay=matching.slice(0,n);
   }else{
-    const max=Math.min(4,ai.hand.length);
+    const max=Math.min(4,hand.length);
     let n=1+Math.floor(Math.random()*max);
     if(matching.length&&Math.random()<.45){cardsToPlay.push(matching[0]);n--;}
-    const nonMatches=ai.hand.filter(c=>!cardsToPlay.some(x=>x.id===c.id));
+    const nonMatches=hand.filter(c=>!cardsToPlay.some(x=>x.id===c.id));
     shuffle(nonMatches);
     cardsToPlay.push(...nonMatches.slice(0,n));
   }
-  makePlay(currentPlayer,cardsToPlay,rank);
+  makePlay(idx,cardsToPlay,rank);
 }
-function aiChallengeDecision(){
-  if(gameOver||!pendingChallenge||players[currentPlayer].isHuman)return;
-  const ai=players[currentPlayer];
-  const claimRank=lastPlay.claimRank;
-  const knownInHand=ai.hand.filter(c=>c.rank===claimRank).length;
-  const claimed=lastPlay.cards.length;
-  let suspicion=ai.call;
-  if(knownInHand+claimed>4) suspicion+=ai.counter?.65:.45;
-  if(claimed>=3) suspicion+=ai.counter?.24:.18;
-  if(players[lastPlay.playerIdx].hand.length<=2) suspicion+=ai.counter?.28:.22;
-  if(players[lastPlay.playerIdx].bluff&&players[lastPlay.playerIdx].bluff>.4) suspicion+=ai.counter?.18:.10;
-  if(Math.random()<Math.min(.9,suspicion)) resolveChallenge(currentPlayer,true);
-  else resolveChallenge(currentPlayer,false);
-}
-function resolveChallenge(challengerIdx,called){
-  const challenger=players[challengerIdx];
-  if(!called){
-    addLog(`${challenger.name} passed.`,'system');
-    pendingChallenge=false; nextRank(); currentPlayer=challengerIdx; render(); return;
-  }
-  const allTruth=lastPlay.cards.every(c=>c.rank===lastPlay.claimRank);
-  addLog(`${challenger.name} called BS!`,'call');
-  addLog(`Revealed: ${lastPlay.cards.map(cardLabel).join(', ')}.`,'system');
-  if(allTruth){
-    challenger.hand.push(...pile); sortHand(challenger.hand);
-    addLog(`${lastPlay.playerName} was telling the truth. ${challenger.name} takes the pile.`,'truth');
+function humanChallengeDecision(called){
+  if(state.phase!=='challenge'||state.challengeResolved||state.humanPassed)return;
+  if(called){
+    resolveChallengeCalled(0);
   }else{
-    players[lastPlay.playerIdx].hand.push(...pile); sortHand(players[lastPlay.playerIdx].hand);
-    addLog(`BS confirmed. ${lastPlay.playerName} takes the pile.`,'lie');
+    state.humanPassed=true;
+    addLog('You passed.','system');
+    render();
   }
-  pile=[]; pendingChallenge=false; nextRank(); currentPlayer=challengerIdx;
-  checkWinnerAfterChallenge(); render();
 }
-function checkWinnerAfterChallenge(){
-  const winner=players.find(p=>p.hand.length===0);
-  if(winner) showWinner(winner);
+function aiChallengeDecision(idx){
+  if(state.phase!=='challenge'||state.challengeResolved)return;
+  const cfg=playerCfg(idx);
+  const lastPlay=state.lastPlay;
+  const claimRank=lastPlay.claimRank;
+  const knownInHand=state.hands[cfg.key].filter(c=>c.rank===claimRank).length;
+  const claimed=lastPlay.cards.length;
+  let suspicion=cfg.call;
+  if(knownInHand+claimed>4) suspicion+=cfg.counter?.65:.45;
+  if(claimed>=3) suspicion+=cfg.counter?.24:.18;
+  if(state.hands[playerCfg(lastPlay.playerIdx).key].length<=2) suspicion+=cfg.counter?.28:.22;
+  const actorCfg=playerCfg(lastPlay.playerIdx);
+  if(actorCfg.bluff&&actorCfg.bluff>.4) suspicion+=cfg.counter?.18:.10;
+  if(Math.random()<Math.min(.9,suspicion)){
+    resolveChallengeCalled(idx);
+  }else{
+    addLog(`${cfg.name} passed.`,'system');
+    render();
+  }
 }
-function showWinner(winner){
-  gameOver=true;
-  document.getElementById('winnerTitle').textContent=`${winner.name} wins!`;
-  document.getElementById('winnerDetails').textContent=winner.isHuman?'You successfully got rid of all your cards.':`${winner.name} got rid of all cards first.`;
+function resolveChallengeCalled(challengerIdx){
+  if(state.challengeResolved)return;
+  state.challengeResolved=true;
+  stopCountdown();
+  const challenger=playerCfg(challengerIdx);
+  addLog(`${challenger.name} called BS!`,'call');
+  playBsCallAnimation();
+  challengeControls.style.display='none';
+  instructionText.innerHTML=`<b>${challenger.isHuman?'You':challenger.name} called BS!</b>`;
+  countdownEl.textContent='Revealing...';
+  scheduleTimer(()=>revealChallenge(challengerIdx), BS_CALL_ANIM_DELAY);
+}
+function revealChallenge(challengerIdx){
+  const challenger=playerCfg(challengerIdx);
+  const lastPlay=state.lastPlay;
+  const allTruth=lastPlay.cards.every(c=>c.rank===lastPlay.claimRank);
+  addLog(`Revealed: ${lastPlay.cards.map(cardLabel).join(', ')}.`,'system');
+  const winnerIdx=allTruth?challengerIdx:lastPlay.playerIdx;
+  const winnerCfg=playerCfg(winnerIdx);
+  if(allTruth){
+    addLog(`${lastPlay.playerName} was telling the truth. ${winnerCfg.name} ${verbTakes(winnerIdx)} the pile.`,'truth');
+  }else{
+    addLog(`BS confirmed. ${winnerCfg.name} ${verbTakes(winnerIdx)} the pile.`,'lie');
+  }
+  instructionText.innerHTML=`Pile going to ${winnerCfg.isHuman?'you':winnerCfg.name}...`;
+  countdownEl.textContent='';
+  const nextIdx=otherPlayersInTurnOrder(lastPlay.playerIdx)[0];
+  animatePileToPlayer(winnerIdx, ()=>{
+    state.hands[winnerCfg.key].push(...state.pile); sortHand(state.hands[winnerCfg.key]);
+    state.pile=[];
+    finishChallengePhase(nextIdx);
+  });
+}
+function animatePileToPlayer(targetIdx, onComplete){
+  const pileEl=document.getElementById('pileStack');
+  const pileRect=pileEl.getBoundingClientRect();
+  const targetCfg=playerCfg(targetIdx);
+  const targetEl=targetCfg.isHuman?document.getElementById('seat-you'):document.getElementById('seat-'+targetCfg.key).querySelector('.avatar');
+  const targetRect=targetEl.getBoundingClientRect();
+  const targetX=targetRect.left+targetRect.width/2;
+  const targetY=targetRect.top+targetRect.height/2;
+  const startX=pileRect.left+pileRect.width/2;
+  const startY=pileRect.top+pileRect.height/2;
+  const flyCount=6;
+  const staggerMs=45;
+  const layer=document.createElement('div');
+  layer.className='fly-layer';
+  document.body.appendChild(layer);
+  const cards=[];
+  for(let i=0;i<flyCount;i++){
+    const card=document.createElement('div');
+    card.className='fly-card';
+    const jitterX=Math.random()*24-12;
+    const jitterY=Math.random()*24-12;
+    card.style.left=(startX+jitterX)+'px';
+    card.style.top=(startY+jitterY)+'px';
+    card.style.transitionDelay=(i*staggerMs)+'ms';
+    layer.appendChild(card);
+    cards.push({el:card,dx:targetX-startX-jitterX,dy:targetY-startY-jitterY});
+  }
+  void layer.offsetWidth;
+  cards.forEach(c=>{
+    c.el.style.transform=`translate(${c.dx}px, ${c.dy}px) scale(.25) rotate(${Math.random()*300-150}deg)`;
+    c.el.style.opacity='0';
+  });
+  const totalDuration=650+(flyCount-1)*staggerMs+80;
+  setTimeout(()=>layer.remove(), totalDuration);
+  scheduleTimer(onComplete, totalDuration);
+}
+function playBsCallAnimation(){
+  const el=document.getElementById('bsCallAnim');
+  const wrap=document.querySelector('.table-wrap');
+  el.classList.remove('show');
+  wrap.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('show');
+  wrap.classList.add('shake');
+  scheduleTimer(()=>{
+    el.classList.remove('show');
+    wrap.classList.remove('shake');
+  }, BS_CALL_ANIM_DELAY);
+}
+function noOneChallenged(actorIdx){
+  if(state.challengeResolved)return;
+  state.challengeResolved=true;
+  addLog('No one called BS. The pile stays.','system');
+  const nextIdx=otherPlayersInTurnOrder(actorIdx)[0];
+  finishChallengePhase(nextIdx);
+}
+function finishChallengePhase(nextCurrentPlayer){
+  stopCountdown();
+  state.phase='play';
+  nextRank();
+  state.currentPlayer=nextCurrentPlayer;
+  if(checkForWinner()) return;
+  render();
+}
+function checkForWinner(){
+  const winnerCfg=PLAYERS_CONFIG.find(p=>state.hands[p.key].length===0);
+  if(!winnerCfg) return false;
+  state.phase='game-over';
+  showWinner(winnerCfg);
+  render();
+  return true;
+}
+function showWinner(winnerCfg){
+  document.getElementById('winnerTitle').textContent=winnerCfg.isHuman?'You win!':`${winnerCfg.name} wins!`;
+  document.getElementById('winnerDetails').textContent=winnerCfg.isHuman?'You got rid of all your cards first.':`${winnerCfg.name} got rid of all cards first.`;
+  document.getElementById('continueBtn').textContent='Play Again';
+  document.getElementById('continueBtn').onclick=newGame;
   document.getElementById('winnerOverlay').style.display='flex';
 }
-function cardLabel(c){return `${c.rank}${c.suit}`;}
-document.getElementById('playBtn').onclick=humanPlay;
-document.getElementById('bsBtn').onclick=()=>resolveChallenge(0,true);
-document.getElementById('passBtn').onclick=()=>resolveChallenge(0,false);
+function startCountdown(){
+  stopCountdown();
+  countdownTimer=setInterval(updateCountdownText,150);
+  updateCountdownText();
+}
+function stopCountdown(){
+  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
+  countdownEl.textContent='';
+}
+function updateCountdownText(){
+  if(state.phase!=='challenge'){stopCountdown();return;}
+  const msLeft=Math.max(0,state.challengeDeadline-Date.now());
+  countdownEl.textContent=`${(msLeft/1000).toFixed(1)}s left to call BS`;
+}
+
+bsBtn.onclick=()=>humanChallengeDecision(true);
+passBtn.onclick=()=>humanChallengeDecision(false);
 document.getElementById('newGameBtn').onclick=newGame;
-document.getElementById('againBtn').onclick=newGame;
+document.querySelectorAll('.claim-btn').forEach(btn=>{
+  btn.onclick=()=>attemptPlay(Number(btn.dataset.count));
+});
+document.getElementById('rulesBtn').onclick=()=>document.getElementById('rulesOverlay').style.display='flex';
+document.getElementById('closeRulesBtn').onclick=()=>document.getElementById('rulesOverlay').style.display='none';
+
+initSeats();
 newGame();
 </script>
 </body>
