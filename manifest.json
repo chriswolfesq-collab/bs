@@ -1,0 +1,12 @@
+{
+  "name": "BS Card Game",
+  "short_name": "BS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1b0f08",
+  "theme_color": "#146325",
+  "orientation": "any",
+  "icons": [
+    { "src": "icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any maskable" }
+  ]
+}

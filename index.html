@@ -4,6 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BS Card Game v8 Table UI</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#146325" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 button,.card,.claim-btn{touch-action:manipulation}
@@ -66,13 +71,13 @@ body{
   position:absolute;
   z-index:4;
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:4px;
 }
-.seat.top{left:50%;top:2px;transform:translateX(-50%);flex-direction:column}
-.seat.left{left:18px;top:42%;transform:translateY(-50%);flex-direction:column}
-.seat.right{right:18px;top:42%;transform:translateY(-50%);flex-direction:column}
-.seat.bottom{left:50%;bottom:-8px;transform:translateX(-50%);flex-direction:column}
+.seat.bottom{left:50%;bottom:-8px;transform:translateX(-50%)}
+.seat.ai{transform:translate(-50%,-50%)}
+.seat.ai.lower{flex-direction:column-reverse}
 .avatar{
   width:100px;
   height:100px;
@@ -92,46 +97,40 @@ body{
   background:rgba(0,0,0,.73);
   border:2px solid rgba(68,231,186,.65);
   border-radius:9px;
-  padding:10px 14px;
-  min-width:160px;
-  max-width:210px;
+  padding:6px 10px;
+  width:100%;
+  max-width:130px;
+  text-align:center;
 }
-.left .info-bubble,.right .info-bubble{position:absolute;top:112px}
-.left .info-bubble{left:-4px}
-.right .info-bubble{right:-4px}
-.top .info-bubble{position:absolute;left:110px;top:10px}
 .bottom .info-bubble{display:none}
-.player-name{font-size:18px;font-weight:900;margin-bottom:4px}
-.player-trait{font-size:14px;line-height:1.25;opacity:.9}
+.player-name{font-size:13px;font-weight:900;margin-bottom:2px}
+.player-trait{font-size:11px;line-height:1.2;opacity:.9}
 .count-badge{
   background:rgba(0,0,0,.78);
   border:2px solid rgba(217,164,65,.55);
   border-radius:10px;
-  padding:8px 18px;
+  padding:5px 12px;
   text-align:center;
   font-weight:900;
-  min-width:96px;
+  min-width:70px;
 }
-.count-num{font-size:26px;line-height:1}
-.count-label{font-size:13px;margin-top:3px}
-.top .count-badge{position:absolute;left:200px;top:96px}
-.left .count-badge{margin-top:100px}
-.right .count-badge{margin-top:100px}
+.count-num{font-size:19px;line-height:1}
+.count-label{font-size:10px;margin-top:2px}
 .bottom .count-badge{
   margin-top:-6px;
   background:#0859b8;
   border-color:#b78a36;
   padding:5px 22px;
+  min-width:96px;
 }
+.bottom .count-num{font-size:26px}
+.bottom .count-label{font-size:13px;margin-top:3px}
+.bottom .player-name{font-size:18px;margin-bottom:0}
 .ai-cards{
-  position:absolute;
   display:flex;
-  z-index:3;
+  justify-content:center;
   pointer-events:none;
 }
-.ai-cards.top-cards{left:50%;top:150px;transform:translateX(-50%);height:80px;align-items:flex-start}
-.ai-cards.left-cards{left:126px;top:42%;transform:translateY(-50%) rotate(90deg);height:80px}
-.ai-cards.right-cards{right:126px;top:42%;transform:translateY(-50%) rotate(-90deg);height:80px}
 .card-back{
   width:50px;
   height:74px;
@@ -207,6 +206,62 @@ body{
   color:#dce8ff;
   font-size:26px;
   font-weight:900;
+}
+.reveal-stack{
+  display:none;
+  justify-content:center;
+  gap:8px;
+  margin:0 auto 14px;
+  flex-wrap:wrap;
+  max-width:360px;
+}
+.reveal-stack.show{display:flex}
+.reveal-card{
+  width:56px;
+  height:80px;
+  border-radius:8px;
+  background:#fff;
+  color:#111;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  box-shadow:0 6px 14px rgba(0,0,0,.4);
+  border:3px solid #d8d8d8;
+  animation:revealPop .4s ease-out;
+}
+.reveal-card.red{color:#b61919}
+.reveal-card .rank{font-size:20px;line-height:1}
+.reveal-card .suit{font-size:20px}
+.reveal-card.truth{border-color:#4ce07a;box-shadow:0 0 22px rgba(76,224,122,.85)}
+.reveal-card.lie{border-color:#ff4d4d;box-shadow:0 0 22px rgba(255,77,77,.85)}
+@keyframes revealPop{
+  0%{transform:scale(.3) rotateY(180deg);opacity:0}
+  100%{transform:scale(1) rotateY(0deg);opacity:1}
+}
+.rank-strip{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:12px;
+}
+.rank-chip{
+  min-width:32px;
+  padding:5px 8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  color:#cfcfcf;
+  font-size:13px;
+  font-weight:900;
+  text-align:center;
+  border:2px solid rgba(255,255,255,.12);
+}
+.rank-chip.current{
+  background:#f3cc62;
+  color:#1d1608;
+  border-color:#fff;
+  box-shadow:0 0 14px rgba(243,204,98,.7);
 }
 .action-row{
   display:flex;
@@ -401,15 +456,23 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .claim-card h4{margin:0 0 10px;color:#ffe56b}
 .claim-card div{font-size:18px;line-height:1.35}
-.rules-btn{
+.left-controls{
   position:absolute;
   left:20px;
   bottom:25px;
   z-index:10;
+  display:flex;
+  gap:10px;
+}
+.rules-btn{
   color:#eee;
   padding:16px 28px;
   font-size:18px;
   font-weight:900;
+}
+#homeBtn,#soundBtn{
+  padding:16px 20px;
+  font-size:18px;
 }
 .deck-panel{
   position:absolute;
@@ -460,6 +523,62 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .overlay-box.rules{text-align:left}
 .overlay-box.rules li{margin-bottom:10px;line-height:1.4}
+.winner-stats{font-size:13px;color:#555;margin-top:10px;line-height:1.5}
+.secondary-btn{
+  background:transparent;
+  color:#888;
+  font-size:13px;
+  font-weight:700;
+  padding:8px;
+  box-shadow:none;
+  margin-top:6px;
+}
+.settings-group{margin-bottom:18px;text-align:left}
+.settings-group h4{margin:0 0 8px;color:#ffe56b}
+.settings-options{display:flex;gap:8px;flex-wrap:wrap}
+.settings-options button{
+  flex:1 1 42px;
+  min-width:42px;
+  background:#e6e6e6;
+  color:#222;
+  font-size:14px;
+  padding:10px 8px;
+}
+.settings-options button.active{background:#f3cc62;color:#1d1608}
+.home-screen{
+  position:fixed;
+  inset:0;
+  z-index:300;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.18),rgba(255,255,255,.035),rgba(0,0,0,.22)),
+    repeating-linear-gradient(90deg,#2a160c 0,#3b2112 110px,#241109 112px,#4d2a16 220px);
+}
+.home-box{
+  background:rgba(8,8,8,.85);
+  border:3px solid rgba(217,164,65,.7);
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.6), inset 0 0 30px rgba(255,255,255,.05);
+  padding:36px 40px;
+  width:min(480px,92vw);
+  max-height:90vh;
+  overflow-y:auto;
+  text-align:center;
+  color:#fff;
+}
+.home-box h1{font-size:46px;margin:0 0 4px;color:#ffe56b;text-shadow:0 3px 0 rgba(0,0,0,.4)}
+.home-subtitle{margin:0 0 26px;color:#ccc;font-size:14px}
+.home-actions{display:flex;flex-direction:column;gap:8px;margin-top:22px}
+.start-btn{
+  background:#f3cc62;
+  color:#1d1608;
+  font-size:20px;
+  padding:16px;
+  border-radius:12px;
+}
+.home-box .secondary-btn{color:#aaa}
 @media(max-width:820px){
   body{overflow-y:auto;overflow-x:hidden;height:auto}
   .table-wrap{
@@ -477,7 +596,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     order:1;
     position:static;
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(64px,1fr));
     gap:6px;
     width:100%;
     border-radius:16px;
@@ -487,11 +606,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
   .table:after{display:none}
   .seat{position:static;flex-direction:column!important;transform:none!important;gap:4px}
-  .seat.top{grid-column:2;order:1}
-  .seat.left{grid-column:1;order:1}
-  .seat.right{grid-column:3;order:1}
-  .seat.bottom{grid-column:1/4;order:3;flex-direction:row!important;justify-content:center;gap:12px}
-  .avatar{width:48px;height:48px;font-size:26px;border-width:3px}
+  .seat.ai{order:1;left:auto!important;top:auto!important}
+  .seat.bottom{grid-column:1/-1;order:3;flex-direction:row!important;justify-content:center;gap:12px}
+  .avatar{width:48px!important;height:48px!important;font-size:26px!important;border-width:3px}
+  .bottom .player-name{font-size:14px}
   .info-bubble{position:static!important;max-width:none;min-width:0;width:100%;padding:4px 6px}
   .player-name{font-size:11px;margin-bottom:0}
   .player-trait{display:none}
@@ -501,7 +619,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .bottom .count-badge{padding:4px 14px}
   .ai-cards{display:none}
   .center-stage{
-    grid-column:1/4;
+    grid-column:1/-1;
     order:2;
     position:static;
     transform:none;
@@ -532,10 +650,19 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .card .suit{font-size:18px}
   .claim-card{grid-column:1/4;order:5;position:static;left:auto;bottom:auto;width:100%;padding:8px;margin-top:6px}
   .claim-card div{font-size:13px}
-  .rules-btn{grid-column:1/3;order:6;position:static;left:auto;bottom:auto;width:100%;padding:11px;font-size:14px;margin-top:6px}
+  .left-controls{grid-column:1/3;order:6;position:static;left:auto;bottom:auto;width:100%;margin-top:6px}
+  .rules-btn,#homeBtn,#soundBtn{padding:11px 6px;font-size:14px;flex:1}
+  .home-box{padding:26px 22px}
+  .home-box h1{font-size:36px}
   .deck-panel{display:none}
   .menu-buttons{grid-column:3/4;order:6;position:static;right:auto;bottom:auto;width:100%;margin-top:6px}
   .menu-buttons button{padding:11px;font-size:14px}
+  .reveal-stack{gap:5px;margin-bottom:8px}
+  .reveal-card{width:44px;height:64px}
+  .reveal-card .rank{font-size:15px}
+  .reveal-card .suit{font-size:15px}
+  .rank-strip{gap:4px;margin-bottom:8px}
+  .rank-chip{min-width:24px;padding:4px 5px;font-size:11px}
   .side-panel{
     grid-column:1/4;
     order:7;
@@ -552,38 +679,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <body>
 <div class="table-wrap">
   <div class="table" id="table">
-    <div class="seat top" id="seat-amy">
-      <div class="avatar" id="avatar-amy"></div>
-      <div class="info-bubble">
-        <div class="player-name" id="name-amy"></div>
-        <div class="player-trait" id="trait-amy"></div>
-      </div>
-      <div class="count-badge"><div class="count-num" id="count-amy">13</div><div class="count-label">CARDS</div></div>
-    </div>
-    <div class="ai-cards top-cards" id="cards-amy"></div>
-
-    <div class="seat left" id="seat-harry">
-      <div class="avatar" id="avatar-harry"></div>
-      <div class="info-bubble">
-        <div class="player-name" id="name-harry"></div>
-        <div class="player-trait" id="trait-harry"></div>
-      </div>
-      <div class="count-badge"><div class="count-num" id="count-harry">13</div><div class="count-label">CARDS</div></div>
-    </div>
-    <div class="ai-cards left-cards" id="cards-harry"></div>
-
-    <div class="seat right" id="seat-carl">
-      <div class="avatar" id="avatar-carl"></div>
-      <div class="info-bubble">
-        <div class="player-name" id="name-carl"></div>
-        <div class="player-trait" id="trait-carl"></div>
-      </div>
-      <div class="count-badge"><div class="count-num" id="count-carl">13</div><div class="count-label">CARDS</div></div>
-    </div>
-    <div class="ai-cards right-cards" id="cards-carl"></div>
-
     <div class="center-stage">
+      <div class="rank-strip" id="rankStrip"></div>
       <div class="claim-banner" id="turnText">Loading...</div>
+      <div class="reveal-stack" id="revealStack"></div>
       <div class="pile-stack" id="pileStack"></div>
       <div class="action-row" id="playControls">
         <div class="claim-buttons" id="claimButtons">
@@ -622,7 +721,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div id="pileInfo">Pile: 0 cards<br>Last claim: none</div>
   </div>
 
-  <button class="rules-btn" id="rulesBtn">📖 RULES</button>
+  <div class="left-controls">
+    <button class="rules-btn" id="rulesBtn">📖 RULES</button>
+    <button class="rules-btn" id="homeBtn">🏠</button>
+    <button class="rules-btn" id="soundBtn">🔊</button>
+  </div>
 
   <div class="deck-panel">
     <div>PILE</div>
@@ -641,7 +744,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <div class="overlay-box">
     <h2 id="winnerTitle">Winner!</h2>
     <p id="winnerDetails"></p>
+    <p class="winner-stats" id="winnerStats"></p>
     <button id="continueBtn">Play Again</button>
+    <button id="winnerHomeBtn" class="secondary-btn">⚙️ Change Settings</button>
   </div>
 </div>
 
@@ -660,17 +765,66 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </div>
 
+<div class="home-screen" id="homeScreen">
+  <div class="home-box">
+    <h1>🎴 BS</h1>
+    <p class="home-subtitle">The classic bluffing card game</p>
+    <div class="settings-group">
+      <h4>Difficulty</h4>
+      <div class="settings-options" id="difficultyOptions">
+        <button data-value="easy">Easy</button>
+        <button data-value="normal">Normal</button>
+        <button data-value="hard">Hard</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <h4>Total Players</h4>
+      <div class="settings-options" id="opponentOptions">
+        <button data-value="2">3</button>
+        <button data-value="3">4</button>
+        <button data-value="4">5</button>
+        <button data-value="5">6</button>
+        <button data-value="6">7</button>
+        <button data-value="7">8</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <h4>Sound</h4>
+      <div class="settings-options" id="homeSoundOptions">
+        <button data-value="on">🔊 On</button>
+        <button data-value="off">🔇 Off</button>
+      </div>
+    </div>
+    <div class="home-actions">
+      <button id="startGameBtn" class="start-btn">▶ START GAME</button>
+      <button id="homeRulesBtn" class="secondary-btn">📖 How to Play</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const suits = ['♠','♥','♦','♣'];
 
-// Turn order is clockwise around the table starting at the human seat (bottom -> left -> top -> right).
-const PLAYERS_CONFIG = [
-  { key:'you', seat:'bottom', name:'You', isHuman:true },
-  { key:'harry', seat:'left', name:'Honest Harry', avatar:'👨', trait:'Rarely bluffs and rarely calls BS.', bluff:.12, call:.05 },
-  { key:'amy', seat:'top', name:'Aggressive Amy', avatar:'👩', trait:'Bluffs a lot and calls BS often.', bluff:.48, call:.20 },
-  { key:'carl', seat:'right', name:'Calculator Carl', avatar:'👨‍💼', trait:'Tracks the cards and calls BS smart.', bluff:.26, call:.09, counter:true }
+// Turn order is clockwise around the table starting at the human seat.
+// Seats are no longer fixed positions — they're computed dynamically around the ellipse based on player count.
+const FULL_ROSTER = [
+  { key:'you', name:'You', isHuman:true },
+  { key:'harry', name:'Honest Harry', avatar:'👨', trait:'Rarely bluffs and rarely calls BS.', bluff:.12, call:.05 },
+  { key:'amy', name:'Aggressive Amy', avatar:'👩', trait:'Bluffs a lot and calls BS often.', bluff:.48, call:.20 },
+  { key:'carl', name:'Calculator Carl', avatar:'👨‍💼', trait:'Tracks the cards and calls BS smart.', bluff:.26, call:.09, counter:true },
+  { key:'nancy', name:'Nervous Nancy', avatar:'👱‍♀️', trait:'Rarely lies but calls BS on a hunch.', bluff:.15, call:.35 },
+  { key:'bob', name:'Bluffing Bob', avatar:'🧔', trait:'Lies constantly, barely watches others.', bluff:.55, call:.07 },
+  { key:'sam', name:'Silent Sam', avatar:'🧑‍🦳', trait:'Passive — rarely lies or challenges.', bluff:.20, call:.03 },
+  { key:'wendy', name:'Wildcard Wendy', avatar:'👩‍🎤', trait:'Tracks cards and plays aggressively.', bluff:.35, call:.25, counter:true }
 ];
+let PLAYERS_CONFIG = FULL_ROSTER;
+
+const DIFFICULTY_PRESETS = {
+  easy:{bluffMult:.6, callMult:.6},
+  normal:{bluffMult:1, callMult:1},
+  hard:{bluffMult:1.35, callMult:1.55}
+};
 
 const CLAIM_DISPLAY_DELAY = 1400;
 const CHALLENGE_WINDOW = 5000;
@@ -679,11 +833,27 @@ const AI_CHALLENGE_MAX_DELAY = 4400;
 const AI_TURN_DELAY_MIN = 2000;
 const AI_TURN_DELAY_RANGE = 1200;
 const BS_CALL_ANIM_DELAY = 1300;
+const REVEAL_HOLD_DELAY = 1400;
 
 let state = null;
 let generation = 0;
 let cardId = 1;
 let countdownTimer = null;
+
+function loadJSON(key, fallback){
+  try{
+    const raw=localStorage.getItem(key);
+    if(!raw) return fallback;
+    return {...fallback, ...JSON.parse(raw)};
+  }catch(e){ return fallback; }
+}
+function saveJSON(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+}
+let settings = loadJSON('bsGameSettings', {difficulty:'normal', opponents:3, soundOn:true});
+let profile = loadJSON('bsGameProfile', {gamesPlayed:0, wins:0, bluffsAttempted:0, bluffsCaught:0, bsCallsWon:0, bsCallsLost:0});
+function saveSettings(){ saveJSON('bsGameSettings', settings); }
+function saveProfile(){ saveJSON('bsGameProfile', profile); }
 
 const handEl = document.getElementById('hand');
 const logEl = document.getElementById('log');
@@ -720,17 +890,42 @@ function shuffle(arr){
 }
 function sortHand(hand){hand.sort((a,b)=>ranks.indexOf(a.rank)-ranks.indexOf(b.rank)||suits.indexOf(a.suit)-suits.indexOf(b.suit));}
 
-function initSeats(){
-  PLAYERS_CONFIG.forEach(p=>{
-    if(p.isHuman) return;
-    document.getElementById('avatar-'+p.key).textContent=p.avatar;
-    document.getElementById('name-'+p.key).textContent=p.name;
-    document.getElementById('trait-'+p.key).textContent=p.trait;
+function buildAISeats(){
+  const table=document.getElementById('table');
+  table.querySelectorAll('.seat.ai').forEach(el=>el.remove());
+  const aiPlayers=PLAYERS_CONFIG.filter(p=>!p.isHuman);
+  const total=PLAYERS_CONFIG.length;
+  const rx=39, ry=39;
+  const avatarSize=Math.max(48, 100-(aiPlayers.length-2)*8);
+  const showTrait=aiPlayers.length<=4;
+  aiPlayers.forEach((p,i)=>{
+    const t=(i+1)/total;
+    const angle=2*Math.PI*t;
+    const leftPct=50-rx*Math.sin(angle);
+    const topPct=50+ry*Math.cos(angle);
+    const seat=document.createElement('div');
+    seat.className='seat ai'+(topPct>58?' lower':'');
+    seat.id='seat-'+p.key;
+    seat.style.left=leftPct+'%';
+    seat.style.top=topPct+'%';
+    seat.innerHTML=`
+      <div class="avatar" id="avatar-${p.key}" style="width:${avatarSize}px;height:${avatarSize}px;font-size:${Math.round(avatarSize*.54)}px">${p.avatar}</div>
+      <div class="info-bubble">
+        <div class="player-name" id="name-${p.key}">${p.name}</div>
+        <div class="player-trait" id="trait-${p.key}"${showTrait?'':' style="display:none"'}>${p.trait}</div>
+      </div>
+      <div class="ai-cards" id="cards-${p.key}"></div>
+      <div class="count-badge"><div class="count-num" id="count-${p.key}">13</div><div class="count-label">CARDS</div></div>
+    `;
+    table.appendChild(seat);
   });
 }
 
 function newGame(){
   generation++;
+  const opponentCount=Math.max(2, Math.min(7, settings.opponents));
+  PLAYERS_CONFIG = [FULL_ROSTER[0], ...FULL_ROSTER.slice(1, 1+opponentCount)];
+  buildAISeats();
   const deck=createDeck();
   const hands={};
   PLAYERS_CONFIG.forEach(p=>hands[p.key]=[]);
@@ -747,6 +942,7 @@ function newGame(){
     challengeResolved:false,
     challengeDeadline:0,
     humanPassed:false,
+    passedChallengers:new Set(),
     selectedIds:new Set()
   };
   cardId=1;
@@ -762,7 +958,82 @@ function addLog(text,type='system'){const div=document.createElement('div');div.
 function cardLabel(c){return `${c.rank}${c.suit}`;}
 function verbTakes(idx){return idx===0?'take':'takes';}
 
-function render(){renderPlayers();renderHand();updateCenter();renderPile();renderClaimButtons();}
+let audioCtx=null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTone(freq,duration,type,gainStart,startOffset){
+  if(!settings.soundOn)return;
+  try{
+    const ctx=getAudioCtx();
+    const t0=ctx.currentTime+(startOffset||0);
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type=type||'sine';
+    osc.frequency.value=freq;
+    gain.gain.setValueAtTime(gainStart||.15, t0);
+    gain.gain.exponentialRampToValueAtTime(.001, t0+duration);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(t0); osc.stop(t0+duration);
+  }catch(e){}
+}
+function playCardSound(){ playTone(320,.08,'square',.08); playTone(260,.06,'square',.06,.04); }
+function playBsSound(){
+  if(!settings.soundOn)return;
+  try{
+    const ctx=getAudioCtx();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type='sawtooth';
+    osc.frequency.setValueAtTime(180,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime+.35);
+    gain.gain.setValueAtTime(.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime+.4);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime+.4);
+  }catch(e){}
+}
+function playWhooshSound(){
+  if(!settings.soundOn)return;
+  try{
+    const ctx=getAudioCtx();
+    const bufferSize=Math.floor(ctx.sampleRate*.3);
+    const buffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*(1-i/bufferSize);
+    const noise=ctx.createBufferSource();
+    noise.buffer=buffer;
+    const filter=ctx.createBiquadFilter();
+    filter.type='bandpass';
+    filter.frequency.value=800;
+    const gain=ctx.createGain();
+    gain.gain.setValueAtTime(.3,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime+.3);
+    noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    noise.start();
+  }catch(e){}
+}
+function playWinSound(){
+  playTone(523,.15,'triangle',.15);
+  playTone(659,.15,'triangle',.15,.12);
+  playTone(784,.25,'triangle',.18,.24);
+}
+
+function renderRankStrip(){
+  const el=document.getElementById('rankStrip');
+  el.innerHTML='';
+  for(let i=0;i<5;i++){
+    const r=ranks[(state.requiredRankIndex+i)%ranks.length];
+    const chip=document.createElement('div');
+    chip.className='rank-chip'+(i===0?' current':'');
+    chip.textContent=r;
+    el.appendChild(chip);
+  }
+}
+
+function render(){renderPlayers();renderHand();updateCenter();renderPile();renderClaimButtons();renderRankStrip();}
 function renderClaimButtons(){
   const canPlay=state.phase==='play'&&state.currentPlayer===0;
   const n=state.selectedIds.size;
@@ -899,7 +1170,13 @@ function makePlay(playerIdx,cards,claimRank){
   state.pile.push(...cards);
   state.lastPlay={playerIdx,playerName:cfg.name,cards:[...cards],claimRank};
   state.selectedIds.clear();
+  if(playerIdx===0&&!cards.every(c=>c.rank===claimRank)){
+    profile.bluffsAttempted++;
+    saveProfile();
+  }
   addLog(`${cfg.name} played ${cards.length} card(s) claiming ${claimRank}${cards.length>1?'s':''}.`,'play');
+  playCardSound();
+  animateSeatToPile(playerIdx, cards.length);
   turnText.innerHTML=`<b>${cfg.name.toUpperCase()} CLAIMS</b><br><span class="rank-word">${cards.length} × ${claimRank}</span>`;
   instructionText.innerHTML='Giving everyone a chance to call BS...';
   countdownEl.textContent='';
@@ -908,10 +1185,50 @@ function makePlay(playerIdx,cards,claimRank){
   renderPlayers();renderHand();renderPile();
   scheduleTimer(()=>startChallengePhase(playerIdx), CLAIM_DISPLAY_DELAY);
 }
+function animateSeatToPile(actorIdx, count){
+  const actorCfg=playerCfg(actorIdx);
+  const originEl=actorCfg.isHuman?document.getElementById('seat-you'):document.getElementById('seat-'+actorCfg.key).querySelector('.avatar');
+  const pileEl=document.getElementById('pileStack');
+  const originRect=originEl.getBoundingClientRect();
+  const pileRect=pileEl.getBoundingClientRect();
+  const originX=originRect.left+originRect.width/2, originY=originRect.top+originRect.height/2;
+  const targetX=pileRect.left+pileRect.width/2, targetY=pileRect.top+pileRect.height/2;
+  const n=Math.min(count,6);
+  const layer=document.createElement('div');
+  layer.className='fly-layer';
+  document.body.appendChild(layer);
+  const cards=[];
+  for(let i=0;i<n;i++){
+    const card=document.createElement('div');
+    card.className='fly-card';
+    const jitterX=Math.random()*16-8, jitterY=Math.random()*16-8;
+    card.style.left=(originX+jitterX)+'px';
+    card.style.top=(originY+jitterY)+'px';
+    card.style.transitionDelay=(i*40)+'ms';
+    layer.appendChild(card);
+    cards.push({el:card,dx:targetX-originX-jitterX,dy:targetY-originY-jitterY});
+  }
+  void layer.offsetWidth;
+  cards.forEach(c=>{
+    c.el.style.transform=`translate(${c.dx}px, ${c.dy}px) scale(.6) rotate(${Math.random()*80-40}deg)`;
+    c.el.style.opacity='0';
+  });
+  setTimeout(()=>layer.remove(), 650+(n-1)*40+80);
+}
+function markPassed(idx, actorIdx){
+  state.passedChallengers.add(idx);
+  const others=otherPlayersInTurnOrder(actorIdx);
+  if(others.every(o=>state.passedChallengers.has(o))){
+    noOneChallenged(actorIdx);
+    return true;
+  }
+  return false;
+}
 function startChallengePhase(actorIdx){
   state.phase='challenge';
   state.challengeResolved=false;
   state.humanPassed=false;
+  state.passedChallengers=new Set();
   state.challengeDeadline=Date.now()+CHALLENGE_WINDOW;
   const others=otherPlayersInTurnOrder(actorIdx);
   render();
@@ -933,7 +1250,8 @@ function aiPlayTurn(){
   const rank=currentRank();
   const matching=hand.filter(c=>c.rank===rank);
   let cardsToPlay=[];
-  const willBluff=matching.length===0||Math.random()<cfg.bluff;
+  const bluffMult=DIFFICULTY_PRESETS[settings.difficulty].bluffMult;
+  const willBluff=matching.length===0||Math.random()<cfg.bluff*bluffMult;
   if(!willBluff&&matching.length>0){
     const n=Math.min(matching.length,1+Math.floor(Math.random()*matching.length));
     cardsToPlay=matching.slice(0,n);
@@ -954,7 +1272,7 @@ function humanChallengeDecision(called){
   }else{
     state.humanPassed=true;
     addLog('You passed.','system');
-    render();
+    if(!markPassed(0, state.lastPlay.playerIdx)) render();
   }
 }
 function aiChallengeDecision(idx){
@@ -964,19 +1282,26 @@ function aiChallengeDecision(idx){
   const claimRank=lastPlay.claimRank;
   const knownInHand=state.hands[cfg.key].filter(c=>c.rank===claimRank).length;
   const claimed=lastPlay.cards.length;
+  const actorHandLen=state.hands[playerCfg(lastPlay.playerIdx).key].length;
   let suspicion=cfg.call;
   if(knownInHand+claimed>4) suspicion+=cfg.counter?.55:.4;
   if(claimed>=3) suspicion+=cfg.counter?.1:.06;
-  if(state.hands[playerCfg(lastPlay.playerIdx).key].length<=2) suspicion+=cfg.counter?.14:.08;
+  if(actorHandLen===0) suspicion+=cfg.counter?.75:.6;
+  else if(actorHandLen<=2) suspicion+=cfg.counter?.14:.08;
   const actorCfg=playerCfg(lastPlay.playerIdx);
   if(actorCfg.bluff&&actorCfg.bluff>.4) suspicion+=cfg.counter?.08:.04;
   if(actorCfg.bluff!==undefined&&actorCfg.bluff<.2) suspicion-=cfg.counter?.05:.02;
+  if(lastPlay.playerIdx===0&&profile.bluffsAttempted>=3){
+    const catchRate=profile.bluffsCaught/profile.bluffsAttempted;
+    suspicion+=catchRate*(cfg.counter?.35:.2);
+  }
+  suspicion*=DIFFICULTY_PRESETS[settings.difficulty].callMult;
   suspicion=Math.max(.02,suspicion);
-  if(Math.random()<Math.min(.85,suspicion)){
+  if(Math.random()<Math.min(.9,suspicion)){
     resolveChallengeCalled(idx);
   }else{
     addLog(`${cfg.name} passed.`,'system');
-    render();
+    if(!markPassed(idx, lastPlay.playerIdx)) render();
   }
 }
 function resolveChallengeCalled(challengerIdx){
@@ -986,10 +1311,27 @@ function resolveChallengeCalled(challengerIdx){
   const challenger=playerCfg(challengerIdx);
   addLog(`${challenger.name} called BS!`,'call');
   playBsCallAnimation();
+  if(state.lastPlay.playerIdx===0&&navigator.vibrate) navigator.vibrate([80,40,80]);
   challengeControls.style.display='none';
   instructionText.innerHTML=`<b>${challenger.isHuman?'You':challenger.name} called BS!</b>`;
   countdownEl.textContent='Revealing...';
   scheduleTimer(()=>revealChallenge(challengerIdx), BS_CALL_ANIM_DELAY);
+}
+function showRevealCards(cards, isTruth){
+  const el=document.getElementById('revealStack');
+  el.innerHTML='';
+  cards.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='reveal-card '+((c.suit==='♥'||c.suit==='♦')?'red ':'')+(isTruth?'truth':'lie');
+    div.innerHTML=`<div class="rank">${c.rank}</div><div class="suit">${c.suit}</div>`;
+    el.appendChild(div);
+  });
+  el.classList.add('show');
+  document.getElementById('pileStack').style.visibility='hidden';
+}
+function hideRevealCards(){
+  document.getElementById('revealStack').classList.remove('show');
+  document.getElementById('pileStack').style.visibility='visible';
 }
 function revealChallenge(challengerIdx){
   const challenger=playerCfg(challengerIdx);
@@ -1003,16 +1345,25 @@ function revealChallenge(challengerIdx){
   }else{
     addLog(`BS confirmed. ${winnerCfg.name} ${verbTakes(winnerIdx)} the pile.`,'lie');
   }
-  instructionText.innerHTML=`Pile going to ${winnerCfg.isHuman?'you':winnerCfg.name}...`;
+  if(lastPlay.playerIdx===0&&!allTruth) profile.bluffsCaught++;
+  if(challengerIdx===0){ if(allTruth) profile.bsCallsLost++; else profile.bsCallsWon++; }
+  saveProfile();
+  showRevealCards(lastPlay.cards, allTruth);
+  instructionText.innerHTML=allTruth?'They were telling the truth!':'Caught the lie!';
   countdownEl.textContent='';
   const nextIdx=otherPlayersInTurnOrder(lastPlay.playerIdx)[0];
-  animatePileToPlayer(winnerIdx, ()=>{
-    state.hands[winnerCfg.key].push(...state.pile); sortHand(state.hands[winnerCfg.key]);
-    state.pile=[];
-    finishChallengePhase(nextIdx);
-  });
+  scheduleTimer(()=>{
+    hideRevealCards();
+    instructionText.innerHTML=`Pile going to ${winnerCfg.isHuman?'you':winnerCfg.name}...`;
+    animatePileToPlayer(winnerIdx, ()=>{
+      state.hands[winnerCfg.key].push(...state.pile); sortHand(state.hands[winnerCfg.key]);
+      state.pile=[];
+      finishChallengePhase(nextIdx);
+    });
+  }, REVEAL_HOLD_DELAY);
 }
 function animatePileToPlayer(targetIdx, onComplete){
+  playWhooshSound();
   const pileEl=document.getElementById('pileStack');
   const pileRect=pileEl.getBoundingClientRect();
   const targetCfg=playerCfg(targetIdx);
@@ -1080,6 +1431,9 @@ function checkForWinner(){
   const winnerCfg=PLAYERS_CONFIG.find(p=>state.hands[p.key].length===0);
   if(!winnerCfg) return false;
   state.phase='game-over';
+  profile.gamesPlayed++;
+  if(winnerCfg.isHuman) profile.wins++;
+  saveProfile();
   showWinner(winnerCfg);
   render();
   return true;
@@ -1087,9 +1441,12 @@ function checkForWinner(){
 function showWinner(winnerCfg){
   document.getElementById('winnerTitle').textContent=winnerCfg.isHuman?'You win!':`${winnerCfg.name} wins!`;
   document.getElementById('winnerDetails').textContent=winnerCfg.isHuman?'You got rid of all your cards first.':`${winnerCfg.name} got rid of all cards first.`;
+  const totalCalls=profile.bsCallsWon+profile.bsCallsLost;
+  document.getElementById('winnerStats').textContent=`Lifetime: ${profile.wins} wins / ${profile.gamesPlayed} games · Your bluffs caught ${profile.bluffsCaught}/${profile.bluffsAttempted} · Your BS calls ${profile.bsCallsWon}/${totalCalls}`;
   document.getElementById('continueBtn').textContent='Play Again';
   document.getElementById('continueBtn').onclick=newGame;
   document.getElementById('winnerOverlay').style.display='flex';
+  if(winnerCfg.isHuman) playWinSound();
 }
 function startCountdown(){
   stopCountdown();
@@ -1113,11 +1470,53 @@ document.querySelectorAll('.claim-btn').forEach(btn=>{
   btn.onclick=()=>attemptPlay(Number(btn.dataset.count));
 });
 document.getElementById('rulesBtn').onclick=()=>document.getElementById('rulesOverlay').style.display='flex';
+document.getElementById('homeRulesBtn').onclick=()=>document.getElementById('rulesOverlay').style.display='flex';
 document.getElementById('closeRulesBtn').onclick=()=>document.getElementById('rulesOverlay').style.display='none';
 window.addEventListener('resize',()=>{ if(state) renderHand(); });
 
-initSeats();
-newGame();
+const soundBtn=document.getElementById('soundBtn');
+function refreshSoundBtn(){
+  soundBtn.textContent=settings.soundOn?'🔊':'🔇';
+  document.querySelectorAll('#homeSoundOptions button').forEach(b=>b.classList.toggle('active', b.dataset.value===(settings.soundOn?'on':'off')));
+}
+soundBtn.onclick=()=>{ settings.soundOn=!settings.soundOn; saveSettings(); refreshSoundBtn(); if(settings.soundOn) playCardSound(); };
+document.querySelectorAll('#homeSoundOptions button').forEach(btn=>{
+  btn.onclick=()=>{ settings.soundOn=btn.dataset.value==='on'; saveSettings(); refreshSoundBtn(); if(settings.soundOn) playCardSound(); };
+});
+
+function refreshSettingsButtons(){
+  document.querySelectorAll('#difficultyOptions button').forEach(b=>b.classList.toggle('active', b.dataset.value===settings.difficulty));
+  document.querySelectorAll('#opponentOptions button').forEach(b=>b.classList.toggle('active', b.dataset.value===String(settings.opponents)));
+  refreshSoundBtn();
+}
+document.querySelectorAll('#difficultyOptions button').forEach(btn=>{
+  btn.onclick=()=>{ settings.difficulty=btn.dataset.value; saveSettings(); refreshSettingsButtons(); };
+});
+document.querySelectorAll('#opponentOptions button').forEach(btn=>{
+  btn.onclick=()=>{ settings.opponents=Number(btn.dataset.value); saveSettings(); refreshSettingsButtons(); };
+});
+
+function showHomeScreen(){
+  generation++;
+  stopCountdown();
+  refreshSettingsButtons();
+  document.getElementById('winnerOverlay').style.display='none';
+  document.getElementById('homeScreen').style.display='flex';
+}
+function hideHomeScreen(){
+  document.getElementById('homeScreen').style.display='none';
+}
+document.getElementById('homeBtn').onclick=showHomeScreen;
+document.getElementById('winnerHomeBtn').onclick=showHomeScreen;
+document.getElementById('startGameBtn').onclick=()=>{ hideHomeScreen(); newGame(); };
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+showHomeScreen();
 </script>
 </body>
 </html>
