@@ -31,6 +31,28 @@ body{
     linear-gradient(90deg,rgba(0,0,0,.18),rgba(255,255,255,.035),rgba(0,0,0,.22)),
     repeating-linear-gradient(90deg,#2a160c 0,#3b2112 110px,#241109 112px,#4d2a16 220px);
 }
+.dashboard-link{
+  position:fixed;
+  top:14px;
+  left:14px;
+  z-index:1000;
+  display:inline-flex;
+  align-items:center;
+  min-height:40px;
+  padding:0 14px;
+  border:2px solid rgba(217,164,65,.55);
+  border-radius:999px;
+  background:rgba(8,8,8,.78);
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 8px 22px rgba(0,0,0,.4);
+}
+.dashboard-link:hover,.dashboard-link:focus-visible{
+  border-color:var(--gold);
+  outline:none;
+}
 .table-wrap{
   position:relative;
   width:100vw;
@@ -685,6 +707,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
+<a class="dashboard-link" href="https://chriswolfesq-collab.github.io/" aria-label="Back to Wolf Games dashboard">Wolf Games</a>
 <div class="table-wrap">
   <div class="table" id="table">
     <div class="center-stage">
